@@ -71,6 +71,9 @@ class DotMap(object):
 	def pprint(self):
 		pprint(self.toDict())
 
+	def values(self):
+		return self._map.values()
+
 if __name__ == '__main__':
 	d = {
 		'a':1,
@@ -87,3 +90,4 @@ if __name__ == '__main__':
 	print dd.toDict()
 	dd.pprint()
 	print
+	print dd.values()
