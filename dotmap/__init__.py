@@ -57,6 +57,9 @@ class DotMap(object):
 		out = 'DotMap({})'.format(', '.join(items))
 		return out
 
+	def __repr__(self):
+		return str(self)
+
 	def toDict(self):
 		d = {}
 		for k,v in self.items():
@@ -68,3 +71,19 @@ class DotMap(object):
 	def pprint(self):
 		pprint(self.toDict())
 
+if __name__ == '__main__':
+	d = {
+		'a':1,
+		'b':2,
+		'subD': {'c':3, 'd':4}
+	}
+	dd = DotMap(d)
+	print dd
+	for k in dd:
+		print k
+	print 'a' in dd
+	print 'c' in dd
+	dd.c.a = 1
+	print dd.toDict()
+	dd.pprint()
+	print
