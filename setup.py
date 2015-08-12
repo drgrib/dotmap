@@ -1,27 +1,14 @@
-from setuptools import setup, find_packages
-import sys, os
-
-version = '1.0'
-
-setup(name='dotmap',
-      version=version,
-      description="ordered, dynamically-expandable dot-access dictionary",
-      long_description="""\
-ordered, dynamically-expandable dot-access dictionary""",
-      classifiers=[], # Get strings from http://pypi.python.org/pypi?%3Aaction=list_classifiers
-      keywords='dict dot map order ordered ordereddict access dynamic',
-      author='Chris Redford',
-      author_email='credford@gmail.com',
-      url='https://github.com/drgrib/dotmap',
-      license='MIT License',
-      packages=find_packages(exclude=['ez_setup', 'examples', 'tests']),
-      include_package_data=True,
-      zip_safe=False,
-      install_requires=[
-          'collections',
-          'pprint'
-      ],
-      entry_points="""
-      # -*- Entry points: -*-
-      """,
-      )
+from distutils.core import setup
+setup(
+	name = 'dotmap',
+	packages = ['dotmap'], # this must be the same as the name above
+	version = '1.0',
+	description = 'ordered, dynamically-expandable dot-access dictionary',
+	author = 'Chris Redford',
+	author_email = 'credford@gmail.com',
+	url = 'https://github.com/drgrib/dotmap', # use the URL to the github repo
+	download_url = 'https://github.com/drgrib/dotmap/1.0',
+	keywords = ['dict', 'dot', 'map', 'order', 'ordered', 'ordereddict', 'access', 'dynamic'], # arbitrary keywords
+	classifiers = [],
+	install_requires=['collections','pprint'],
+)
