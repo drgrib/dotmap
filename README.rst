@@ -2,7 +2,7 @@
 DotMap
 ========
 
-DotMap is a dot-access :code:`dict` that
+DotMap is a dot-access dictionary that
 
 * is dynamically expandable
 * can be initialized with keys
