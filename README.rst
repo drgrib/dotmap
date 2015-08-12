@@ -9,8 +9,8 @@ DotMap is a dot-access dictionary that
 * easily initializes from :code:`dict`
 * easily converts to :code:`dict`
 * subclasses :code:`OrderedDict` which
-	* is ordered by insertion
-	* subclasses :code:`dict`
+	- is ordered by insertion
+	- subclasses :code:`dict`
 
 .. code-block:: python
 	
