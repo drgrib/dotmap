@@ -12,7 +12,7 @@ DotMap is a dot-access dictionary that
 ** is ordered by insertion
 ** subclasses `dict`
 
-:: python
+.. highlight:: python
 	
 	m = DotMap()
 
