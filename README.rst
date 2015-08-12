@@ -2,13 +2,21 @@
 DotMap
 ========
 
-DotMap is a dot-access dictionary that is
+DotMap is a dot-access dictionary that
 
-* ordered by insertion
-* dynamically expandable
+* is dynamically expandable
+* can be initialized with keys
+* easily initializes from `dict`
+* easily converts to `dict`
+* subclasses `OrderedDict` which
+** is ordered by insertion
+** subclasses `dict`
+
 ::
 	
 	m = DotMap()
+
+	# key initialization
 	
 	# new sub maps are created dynamically
 	m.people.john.age = 32
@@ -18,7 +26,6 @@ DotMap is a dot-access dictionary that is
 
 	# iteration ordered by insertion
 	for k, v in m.people.items():
-		# accessible by brackets
 		print k, v
 	print
 
