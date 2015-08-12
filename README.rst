@@ -13,8 +13,6 @@ DotMap is a dot-access :code:`dict` that
 .. code-block:: python
 	
 	m = DotMap()
-
-	# key initialization
 	
 	# new sub maps are created dynamically
 	m.people.john.age = 32
@@ -26,6 +24,9 @@ DotMap is a dot-access :code:`dict` that
 	for k, v in m.people.items():
 		print k, v
 	print
+
+	# key initialization
+	m = DotMap(a=1, b=2)
 
 	# easy conversion to dictionary
 	d = m.toDict()
