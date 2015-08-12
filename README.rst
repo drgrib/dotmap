@@ -6,11 +6,11 @@ DotMap is a dot-access dictionary that
 
 * is dynamically expandable
 * can be initialized with keys
-* easily initializes from `dict`
-* easily converts to `dict`
-* subclasses `OrderedDict` which
+* easily initializes from :code:`dict`
+* easily converts to :code:`dict`
+* subclasses :code:`OrderedDict` which
 ** is ordered by insertion
-** subclasses `dict`
+** subclasses :code:`dict`
 
 .. code-block:: python
 	
