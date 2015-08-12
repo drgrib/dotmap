@@ -12,6 +12,8 @@ DotMap is a dot-access :code:`dict` that
 
 .. code-block:: python
 	
+	from dotmap import DotMap	
+
 	m = DotMap()
 	
 	# new sub maps are created dynamically
