@@ -81,13 +81,13 @@ if __name__ == '__main__':
 		'subD': {'c':3, 'd':4}
 	}
 	dd = DotMap(d)
-	print dd
+	print(dd)
 	for k in dd:
-		print k
-	print 'a' in dd
-	print 'c' in dd
+		print(k)
+	print('a' in dd)
+	print('c' in dd)
 	dd.c.a = 1
-	print dd.toDict()
+	print(dd.toDict())
 	dd.pprint()
 	print
-	print dd.values()
+	print(dd.values())

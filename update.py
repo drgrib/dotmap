@@ -14,7 +14,7 @@ if __name__ == '__main__':
 				major, middle, minor = [int(x) for x in version.split('.')]
 				minor += 1
 				newVersion = '{}.{}.{}'.format(major, middle, minor)
-				print '{} -> {}'.format(version, newVersion)
+				print('{} -> {}'.format(version, newVersion))
 				line = "\tversion = '{}',\n".format(newVersion)
 			outLines.append(line)
 	# write updated lines
