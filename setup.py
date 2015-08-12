@@ -3,7 +3,7 @@ from setuptools import setup
 setup(
 	name = 'dotmap',
 	packages = ['dotmap'], # this must be the same as the name above
-	version = '1.0',
+	version = '1.0.1',
 	description = 'ordered, dynamically-expandable dot-access dictionary',
 	author = 'Chris Redford',
 	author_email = 'credford@gmail.com',

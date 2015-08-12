@@ -8,7 +8,7 @@ DotMap is a dot-access :code:`dict` that
 * can be initialized with keys
 * easily initializes from :code:`dict`
 * easily converts to :code:`dict`
-* subclasses :code:`OrderedDict` which is ordered by insertion and subclasses :code:`dict`
+* is ordered by insertion
 
 .. code-block:: python
 	
