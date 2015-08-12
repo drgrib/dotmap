@@ -20,5 +20,4 @@ if __name__ == '__main__':
 	# write updated lines
 	with open(setupFile, 'w') as f:
 		s = ''.join(outLines)
-		print s
 		f.write(s)
