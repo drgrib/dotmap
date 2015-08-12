@@ -6,8 +6,7 @@ DotMap is a dot-access dictionary that is
 
 * ordered by insertion
 * dynamically expandable
-
-Some code
+::
 
 	from dotmap import DotMap
 	d = DotMap()
