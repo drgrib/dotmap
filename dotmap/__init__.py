@@ -53,9 +53,12 @@ class DotMap(object):
 	def __str__(self):
 		items = []
 		for k,v in self._map.iteritems():
-			items.append('{}={}'.format(k, v))
+			items.append('{}={}'.format(k, repr(v)))
 		out = 'DotMap({})'.format(', '.join(items))
 		return out
+
+	def __repr__(self):
+		return str(self)
 
 	def toDict(self):
 		d = {}
@@ -68,3 +71,25 @@ class DotMap(object):
 	def pprint(self):
 		pprint(self.toDict())
 
+	def values(self):
+		return self._map.values()
+
+if __name__ == '__main__':
+	d = {
+		'a':1,
+		'b':2,
+		'subD': {'c':3, 'd':4}
+	}
+	dd = DotMap(d)
+	print(dd)
+	for k in dd:
+		print(k)
+	print('a' in dd)
+	print('c' in dd)
+	dd.c.a = 1
+	print(dd.toDict())
+	dd.pprint()
+	print
+	print(dd.values())
+	dm = DotMap(name='Steve', job='programmer')
+	print dm
