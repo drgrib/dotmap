@@ -74,20 +74,37 @@ class DotMap(OrderedDict):
 	# proper dict subclassing
 	def values(self):
 		return self._map.values()
+
+	@classmethod
+	def parseOther(self, other):
+		if type(other) is DotMap:
+			return other._map
+		else:
+			return other	
 	def __cmp__(self, other):
-		return self._map.__cmp__(other._map)
+		other = DotMap.parseOther(other)
+		return self._map.__cmp__(other)
 	def __eq__(self, other):
-		return self._map.__eq__(other._map)
+		other = DotMap.parseOther(other)
+		if not isinstance(other, dict):
+			return False
+		return self._map.__eq__(other)
 	def __ge__(self, other):
-		return self._map.__ge__(other._map)
+		other = DotMap.parseOther(other)
+		return self._map.__ge__(other)
 	def __gt__(self, other):
-		return self._map.__gt__(other._map)
+		other = DotMap.parseOther(other)
+		return self._map.__gt__(other)
 	def __le__(self, other):
-		return self._map.__le__(other._map)
+		other = DotMap.parseOther(other)
+		return self._map.__le__(other)
 	def __lt__(self, other):
-		return self._map.__lt__(other._map)
+		other = DotMap.parseOther(other)
+		return self._map.__lt__(other)
 	def __ne__(self, other):
-		return self._map.__ne__(other._map)
+		other = DotMap.parseOther(other)
+		return self._map.__ne__(other)
+
 	def __delitem__(self, key):
 		return self._map.__delitem__(key)
 	def __len__(self):
