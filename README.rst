@@ -31,6 +31,19 @@ However, :code:`DotMap` is a :code:`dict` and you can treat it like a :code:`dic
 	print m.name
 	# Joe Smith Jr
 
+It also has fast, automatic hierarchy
+
+.. code-block:: python
+
+	m = DotMap()
+	m.people.steve.age = 31
+
+Among other things you have key initialization
+
+.. code-block:: python
+
+	m = DotMap(a=1, b=2)
+
 You can also initialize it from :code:`dict` and convert it to :code:`dict`
 
 .. code-block:: python
@@ -44,20 +57,7 @@ You can also initialize it from :code:`dict` and convert it to :code:`dict`
 	print m.toDict()
 	# {'a': 1, 'b': 2}
 
-Another key feature is that children of a :code:`DotMap` are assumed to be :code:`DotMap` if they aren't assigned a value. This means fast, automatic hierarchy when you need it
-
-.. code-block:: python
-
-	m = DotMap()
-	m.people.steve.age = 31
-
-Among other things you have key initialization
-
-.. code-block:: python
-
-	m = DotMap(a=1, b=2)
-
-And iteration that is ordered by insertion
+And it has iteration that is ordered by insertion
 
 .. code-block:: python
 
