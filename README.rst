@@ -78,7 +78,7 @@ And it has iteration that is ordered by insertion
 	# mary DotMap(age=24, job='designer')
 	# dave DotMap(age=55, job='manager')	
 
-It also has a built-in :code:`pprint` as :code:`dict` for debugging a large :code:`DotMap`
+There is also built-in :code:`pprint` as :code:`dict` for debugging a large :code:`DotMap`
 
 .. code-block:: python
 
@@ -86,3 +86,5 @@ It also has a built-in :code:`pprint` as :code:`dict` for debugging a large :cod
 	# {'people': {'dave': {'age': 55, 'job': 'manager'},
 	#             'john': {'age': 32, 'job': 'programmer'},
 	#             'mary': {'age': 24, 'job': 'designer'}}}
+
+And many other features involving dots and dictionaries that will be immediately intuitive as you use it.
