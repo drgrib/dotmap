@@ -72,12 +72,10 @@ And iteration that is ordered by insertion
 	for k, v in m.people.items():
 		print k, v
 	print
+	
 	# john DotMap(age=32, job='programmer')
 	# mary DotMap(age=24, job='designer')
 	# dave DotMap(age=55, job='manager')	
-
-	# easy conversion to dictionary
-	d = m.toDict()
 
 It also has a built-in pprint as :code:`dict` for debugging a large :code:`DotMap`
 
