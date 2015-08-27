@@ -13,6 +13,7 @@ DotMap
 The key feature is exactly what you want: dot-access
 
 .. code-block:: python
+
 	from dotmap import DotMap
 	m = DotMap()
 	m.name = 'Joe'
@@ -21,6 +22,7 @@ The key feature is exactly what you want: dot-access
 However, :code:`DotMap` is a :code:`dict` and you can treat it like a :code:`dict` as needed
 
 .. code-block:: python
+
 	print m['name']
 	# Joe
 	m.name += ' Smith'
@@ -31,6 +33,7 @@ However, :code:`DotMap` is a :code:`dict` and you can treat it like a :code:`dic
 You can also initialize it from :code:`dict` and convert it to :code:`dict`
 
 .. code-block:: python
+
 	d = {'a':1, 'b':2}
 	
 	m = DotMap(d)
@@ -43,17 +46,20 @@ You can also initialize it from :code:`dict` and convert it to :code:`dict`
 Another key feature is that children of a :code:`DotMap` are assumed to be :code:`DotMap` if they aren't assigned a value. This means fast, automatic hierarchy when you need it
 
 .. code-block:: python
+
 	m = DotMap()
 	m.people.steve.age = 31
 
 Among other things you have key initialization
 
 .. code-block:: python
+
 	m = DotMap(a=1, b=2)
 
 And iteration that is ordered by insertion
 
 .. code-block:: python
+
 	m = DotMap()
 
 	m.people.john.age = 32
@@ -76,6 +82,7 @@ And iteration that is ordered by insertion
 It also has a built-in pprint as :code:`dict` for debugging a large :code:`DotMap`
 
 .. code-block:: python
+
 	m.pprint()
 	# {'people': {'dave': {'age': 55, 'job': 'manager'},
     #        'john': {'age': 32, 'job': 'programmer'},
