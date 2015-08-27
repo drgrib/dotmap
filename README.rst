@@ -78,7 +78,7 @@ And iteration that is ordered by insertion
 	# mary DotMap(age=24, job='designer')
 	# dave DotMap(age=55, job='manager')	
 
-It also has a built-in pprint as :code:`dict` for debugging a large :code:`DotMap`
+It also has a built-in :code:`pprint` as :code:`dict` for debugging a large :code:`DotMap`
 
 .. code-block:: python
 
