@@ -38,13 +38,13 @@ It also has fast, automatic hierarchy
 	m = DotMap()
 	m.people.steve.age = 31
 
-Among other things you have key initialization
+It also has key initialization
 
 .. code-block:: python
 
 	m = DotMap(a=1, b=2)
 
-You can also initialize it from :code:`dict` and convert it to :code:`dict`
+You can initialize it from :code:`dict` and convert it to :code:`dict`
 
 .. code-block:: python
 
