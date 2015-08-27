@@ -84,5 +84,5 @@ It also has a built-in :code:`pprint` as :code:`dict` for debugging a large :cod
 
 	m.pprint()
 	# {'people': {'dave': {'age': 55, 'job': 'manager'},
-	#        'john': {'age': 32, 'job': 'programmer'},
-	#        'mary': {'age': 24, 'job': 'designer'}}}
+	#			  'john': {'age': 32, 'job': 'programmer'},
+	#			  'mary': {'age': 24, 'job': 'designer'}}}
