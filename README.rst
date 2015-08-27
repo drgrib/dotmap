@@ -2,40 +2,81 @@
 DotMap
 ========
 
-DotMap is a dot-access :code:`dict` subclass that
+:code:`DotMap` is a dot-access :code:`dict` subclass that
 
-* is dynamically expandable
+* has dynamic child creation
 * can be initialized with keys
 * easily initializes from :code:`dict`
 * easily converts to :code:`dict`
 * is ordered by insertion
 
-.. code-block:: python
-	
-	from dotmap import DotMap	
+The key feature is exactly what you want: dot-access
 
+.. code-block:: python
+	from dotmap import DotMap
 	m = DotMap()
+	m.name = 'Joe'
+	print 'Hello ' + m.name
+
+However, :code:`DotMap` is a :code:`dict` and you can treat it like a :code:`dict` as needed
+
+.. code-block:: python
+	print m['name']
+	# Joe
+	m.name += ' Smith'
+	m['name'] += ' Jr'
+	print m.name
+	# Joe Smith Jr
+
+You can also initialize it from :code:`dict` and convert it to :code:`dict`
+
+.. code-block:: python
+	d = {'a':1, 'b':2}
 	
-	# new sub maps are created dynamically
+	m = DotMap(d)
+	print m
+	# DotMap(a=1, b=2)
+	
+	print m.toDict()
+	# {'a': 1, 'b': 2}
+
+Another key feature is that children of a :code:`DotMap` are assumed to be :code:`DotMap` if they aren't assigned a value. This means fast, automatic hierarchy when you need it
+
+.. code-block:: python
+	m = DotMap()
+	m.people.steve.age = 31
+
+Among other things you have key initialization
+
+.. code-block:: python
+	m = DotMap(a=1, b=2)
+
+And iteration that is ordered by insertion
+
+.. code-block:: python
+	m = DotMap()
+
 	m.people.john.age = 32
 	m.people.john.job = 'programmer'
 	m.people.mary.age = 24
 	m.people.mary.job = 'designer'
+	m.people.dave.age = 55
+	m.people.dave.job = 'manager'
 
-	# iteration ordered by insertion
 	for k, v in m.people.items():
 		print k, v
 	print
-
-	# key initialization
-	m = DotMap(a=1, b=2)
+	# john DotMap(age=32, job='programmer')
+	# mary DotMap(age=24, job='designer')
+	# dave DotMap(age=55, job='manager')	
 
 	# easy conversion to dictionary
 	d = m.toDict()
 
-	# easy initialization from dictionary
-	newMap = DotMap(d)
-	print newMap
+It also has a built-in pprint as :code:`dict` for debugging a large :code:`DotMap`
 
-	# built-in pprint
-	newMap.pprint()
+.. code-block:: python
+	m.pprint()
+	# {'people': {'dave': {'age': 55, 'job': 'manager'},
+    #        'john': {'age': 32, 'job': 'programmer'},
+    #        'mary': {'age': 24, 'job': 'designer'}}}
