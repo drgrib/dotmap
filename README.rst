@@ -87,4 +87,4 @@ There is also built-in :code:`pprint` as :code:`dict` for debugging a large :cod
 	#             'john': {'age': 32, 'job': 'programmer'},
 	#             'mary': {'age': 24, 'job': 'designer'}}}
 
-And many other features involving dots and dictionaries that will be immediately intuitive as you use it.
+And many other features involving dots and dictionaries that will be immediately intuitive when used.
