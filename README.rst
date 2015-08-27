@@ -38,7 +38,7 @@ It also has fast, automatic hierarchy
 	m = DotMap()
 	m.people.steve.age = 31
 
-It also has key initialization
+And key initialization
 
 .. code-block:: python
 
