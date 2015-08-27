@@ -47,6 +47,9 @@ class DotMap(OrderedDict):
 		else:
 			return self[k]
 
+	def __delattr__(self, key):
+		return self._map.__delitem__(key)
+
 	def __contains__(self, k):
 		return self._map.__contains__(k)
 
@@ -178,3 +181,8 @@ if __name__ == '__main__':
 	dm = DotMap(name='Steve', job='programmer')
 	print(dm)
 	print issubclass(dm.__class__, dict)
+	am = DotMap()
+	am.some.deep.path.cuz.we = 'can'
+	print(am)
+	del am.some.deep
+	print(am)
