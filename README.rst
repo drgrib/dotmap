@@ -18,6 +18,7 @@ The key feature is exactly what you want: dot-access
 	m = DotMap()
 	m.name = 'Joe'
 	print 'Hello ' + m.name
+	# Hello Joe
 
 However, :code:`DotMap` is a :code:`dict` and you can treat it like a :code:`dict` as needed
 
@@ -72,7 +73,7 @@ And iteration that is ordered by insertion
 	for k, v in m.people.items():
 		print k, v
 	print
-	
+
 	# john DotMap(age=32, job='programmer')
 	# mary DotMap(age=24, job='designer')
 	# dave DotMap(age=55, job='manager')	
@@ -83,5 +84,5 @@ It also has a built-in pprint as :code:`dict` for debugging a large :code:`DotMa
 
 	m.pprint()
 	# {'people': {'dave': {'age': 55, 'job': 'manager'},
-    #        'john': {'age': 32, 'job': 'programmer'},
-    #        'mary': {'age': 24, 'job': 'designer'}}}
+	#        'john': {'age': 32, 'job': 'programmer'},
+	#        'mary': {'age': 24, 'job': 'designer'}}}
