@@ -56,8 +56,8 @@ class DotMap(OrderedDict):
 	def __str__(self):
 		items = []
 		for k,v in self._map.iteritems():
-			items.append('{}={}'.format(k, repr(v)))
-		out = 'DotMap({})'.format(', '.join(items))
+			items.append('{0}={1}'.format(k, repr(v)))
+		out = 'DotMap({0})'.format(', '.join(items))
 		return out
 
 	def __repr__(self):
