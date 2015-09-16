@@ -30,6 +30,7 @@ if __name__ == '__main__':
     unittest.main()
 
 a = """	
+
 	print(OrderedDict.fromkeys([1,2,3]))
 	print(DotMap.fromkeys([1,2,3], 'a'))
 	print(dd.get('a'))
