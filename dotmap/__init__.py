@@ -1,5 +1,6 @@
 from collections import OrderedDict
 from pprint import pprint
+from sys import version_info
 
 class DotMap(OrderedDict):
 	def __init__(self, *args, **kwargs):
@@ -16,10 +17,13 @@ class DotMap(OrderedDict):
 				self._map[k] = v
 
 	def items(self):
-		return self._map.items()
+		if version_info.major == 2:
+			return self._map.iteritems()
+		else:	
+			return self._map.items()
 
 	def iteritems(self):
-		return self._map.items()
+		return self.items()
 
 	def __iter__(self):
 		return self._map.__iter__()
@@ -147,42 +151,3 @@ class DotMap(OrderedDict):
 		d = DotMap()
 		d._map = OrderedDict.fromkeys(seq, value)
 		return d
-
-if __name__ == '__main__':
-	d = {
-		'a':1,
-		'b':2,
-		'subD': {'c':3, 'd':4}
-	}
-	dd = DotMap(d)
-	print(dd)
-	print(len(dd))
-	print(dd.copy())
-	print(dd)
-	print(OrderedDict.fromkeys([1,2,3]))
-	print(DotMap.fromkeys([1,2,3], 'a'))
-	print(dd.get('a'))
-	print(dd.get('f',33))
-	print(dd.get('f'))
-	print(dd.has_key('a'))
-	dd.update([('rat',5),('bum',4)], dog=7,cat=9)
-	dd.update({'lol':1,'ba':2})
-	print(dd)
-	print
-	for k in dd:
-		print(k)
-	print('a' in dd)
-	print('c' in dd)
-	dd.c.a = 1
-	print(dd.toDict())
-	dd.pprint()
-	print
-	print(dd.values())
-	dm = DotMap(name='Steve', job='programmer')
-	print(dm)
-	print(issubclass(dm.__class__, dict))
-	am = DotMap()
-	am.some.deep.path.cuz.we = 'can'
-	print(am)
-	del am.some.deep
-	print(am)
