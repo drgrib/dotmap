@@ -1,25 +1,34 @@
 from collections import OrderedDict
 from pprint import pprint
+from sys import version_info
+from inspect import ismethod
 
 class DotMap(OrderedDict):
+
 	def __init__(self, *args, **kwargs):
 		self._map = OrderedDict()
 		if args:
 			d = args[0]
 			if type(d) is dict:
-				for k,v in d.iteritems():
+				for k,v in self.__call_items(d):
 					if type(v) is dict:
 						v = DotMap(v)
 					self._map[k] = v
 		if kwargs:
-			for k,v in kwargs.iteritems():
+			for k,v in self.__call_items(kwargs):
 				self._map[k] = v
+
+	def __call_items(self, obj):
+		if hasattr(obj, 'iteritems') and ismethod(getattr(obj, 'iteritems')):
+			return obj.iteritems()
+		else:
+			return obj.items()
 
 	def items(self):
 		return self.iteritems()
 
 	def iteritems(self):
-		return self._map.iteritems()
+		return self.__call_items(self._map)
 
 	def __iter__(self):
 		return self._map.__iter__()
@@ -55,7 +64,7 @@ class DotMap(OrderedDict):
 
 	def __str__(self):
 		items = []
-		for k,v in self._map.iteritems():
+		for k,v in self.__call_items(self._map):
 			items.append('{0}={1}'.format(k, repr(v)))
 		out = 'DotMap({0})'.format(', '.join(items))
 		return out
@@ -119,7 +128,7 @@ class DotMap(OrderedDict):
 	def get(self, key, default=None):
 		return self._map.get(key, default)
 	def has_key(self, key):
-		return self._map.has_key(key)
+		return key in self._map
 	def iterkeys(self):
 		return self._map.iterkeys()
 	def itervalues(self):
@@ -180,7 +189,7 @@ if __name__ == '__main__':
 	print(dd.values())
 	dm = DotMap(name='Steve', job='programmer')
 	print(dm)
-	print issubclass(dm.__class__, dict)
+	print(issubclass(dm.__class__, dict))
 	am = DotMap()
 	am.some.deep.path.cuz.we = 'can'
 	print(am)
