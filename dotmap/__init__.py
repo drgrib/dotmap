@@ -1,5 +1,6 @@
 from collections import OrderedDict
 from pprint import pprint
+from sys import version_info
 
 class DotMap(OrderedDict):
 	def __init__(self, *args, **kwargs):
@@ -19,7 +20,10 @@ class DotMap(OrderedDict):
 		return self._map.items()
 
 	def iteritems(self):
-		return self._map.items()
+		if version_info.major == 2:
+			return self._map.iteritems()
+		else:
+			return self.items()
 
 	def __iter__(self):
 		return self._map.__iter__()
