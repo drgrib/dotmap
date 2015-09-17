@@ -17,13 +17,13 @@ class DotMap(OrderedDict):
 				self._map[k] = v
 
 	def items(self):
-		return self._map.items()
+		return self.iteritems()
 
 	def iteritems(self):
 		if version_info.major == 2:
 			return self._map.iteritems()
 		else:
-			return self.items()
+			return self._map.items()
 
 	def __iter__(self):
 		return self._map.__iter__()
