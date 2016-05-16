@@ -1,3 +1,5 @@
+# must use personal access token for password
+
 update:
 	python update.py
 	git commit -am "update version"
