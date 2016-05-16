@@ -212,4 +212,4 @@ if __name__ == '__main__':
 		]
 	}
 	parent = DotMap(parentDict)
-	print [x.name for x in parent.children]
+	print([x.name for x in parent.children])
