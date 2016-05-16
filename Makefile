@@ -1,4 +1,5 @@
-# must use personal access token for password
+# must use personal access token for github password
+# must set up ~/.pypirc for pypi password
 
 update:
 	python update.py
