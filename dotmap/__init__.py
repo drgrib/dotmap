@@ -13,6 +13,14 @@ class DotMap(OrderedDict):
 				for k,v in self.__call_items(d):
 					if type(v) is dict:
 						v = DotMap(v)
+					if type(v) is list:
+						l = []
+						for i in v:
+							n = i
+							if type(i) is dict:
+								n = DotMap(i)
+							l.append(n)
+						v = l
 					self._map[k] = v
 		if kwargs:
 			for k,v in self.__call_items(kwargs):
@@ -195,3 +203,13 @@ if __name__ == '__main__':
 	print(am)
 	del am.some.deep
 	print(am)
+	parentDict = {
+		'name': 'Father1',
+		'children': [
+			{'name': 'Child1'},
+			{'name': 'Child2'},
+			{'name': 'Child3'},
+		]
+	}
+	parent = DotMap(parentDict)
+	print [x.name for x in parent.children]
