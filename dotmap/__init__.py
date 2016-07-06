@@ -164,6 +164,8 @@ class DotMap(OrderedDict):
 		d = DotMap()
 		d._map = OrderedDict.fromkeys(seq, value)
 		return d
+	def __getstate__(self): return self.__dict__
+	def __setstate__(self, d): self.__dict__.update(d)
 
 if __name__ == '__main__':
 	d = {
@@ -213,3 +215,10 @@ if __name__ == '__main__':
 	}
 	parent = DotMap(parentDict)
 	print([x.name for x in parent.children])
+	# pickle
+	print('\n== pickle ==')
+	import pickle
+	s = pickle.dumps(parent)
+	d = pickle.loads(s)
+	print(d)
+	print('')
