@@ -9,7 +9,7 @@ class DotMap(OrderedDict):
 		self._map = OrderedDict()
 		if args:
 			d = args[0]
-			if type(d) is dict:
+			if isinstance(d, dict):
 				for k,v in self.__call_items(d):
 					if type(v) is dict:
 						v = DotMap(v)
@@ -221,4 +221,7 @@ if __name__ == '__main__':
 	s = pickle.dumps(parent)
 	d = pickle.loads(s)
 	print(d)
-	print('')
+	# init from DotMap
+	print('\n== init from DotMap ==')
+	e = DotMap(d)
+	print(e)
