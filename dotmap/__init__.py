@@ -91,6 +91,9 @@ class DotMap(OrderedDict):
 	def pprint(self):
 		pprint(self.toDict())
 
+	def empty(self):
+		return (not any(self))
+
 	# proper dict subclassing
 	def values(self):
 		return self._map.values()
@@ -225,3 +228,9 @@ if __name__ == '__main__':
 	print('\n== init from DotMap ==')
 	e = DotMap(d)
 	print(e)
+	# empty
+	print('\n== empty() ==')
+	d = DotMap()
+	print(d.empty())
+	d.a = 1
+	print(d.empty())
