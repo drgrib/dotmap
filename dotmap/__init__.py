@@ -7,6 +7,7 @@ class DotMap(OrderedDict):
 
 	def __init__(self, *args, **kwargs):
 		self._map = OrderedDict()
+		self._dynamic = True
 		if args:
 			d = args[0]
 			if isinstance(d, dict):
@@ -24,7 +25,10 @@ class DotMap(OrderedDict):
 					self._map[k] = v
 		if kwargs:
 			for k,v in self.__call_items(kwargs):
-				self._map[k] = v
+				if k == '_dynamic':
+					self._dynamic = v
+				else:
+					self._map[k] = v
 
 	def __call_items(self, obj):
 		if hasattr(obj, 'iteritems') and ismethod(getattr(obj, 'iteritems')):
@@ -47,19 +51,19 @@ class DotMap(OrderedDict):
 	def __setitem__(self, k, v):
 		self._map[k] = v
 	def __getitem__(self, k):
-		if k not in self._map:
+		if k not in self._map and self._dynamic:
 			# automatically extend to new DotMap
 			self[k] = DotMap()
 		return self._map[k]
 
 	def __setattr__(self, k, v):
-		if k == '_map':
+		if k in {'_map','_dynamic'}:
 			super(DotMap, self).__setattr__(k,v)
 		else:
 			self[k] = v
 
 	def __getattr__(self, k):
-		if k == '_map':
+		if k == {'_map','_dynamic'}:
 			super(DotMap, self).__getattr__(k)
 		else:
 			return self[k]
@@ -218,19 +222,31 @@ if __name__ == '__main__':
 	}
 	parent = DotMap(parentDict)
 	print([x.name for x in parent.children])
+	
 	# pickle
 	print('\n== pickle ==')
 	import pickle
 	s = pickle.dumps(parent)
 	d = pickle.loads(s)
 	print(d)
+	
 	# init from DotMap
 	print('\n== init from DotMap ==')
 	e = DotMap(d)
 	print(e)
+	
 	# empty
 	print('\n== empty() ==')
 	d = DotMap()
 	print(d.empty())
 	d.a = 1
 	print(d.empty())
+
+	# _dynamic
+	print('\n== _dynamic ==')
+	d = DotMap()
+	d.still.works 
+	print(d)
+	d = DotMap(_dynamic=False)
+	d.no.creation
+	print(d)
