@@ -31,7 +31,7 @@ However, :code:`DotMap` is a :code:`dict` and you can treat it like a :code:`dic
 	print m.name
 	# Joe Smith Jr
 
-It also has fast, automatic hierarchy
+It also has fast, automatic hierarchy (which can be deactivated by initializing with `DotMap(_dynamic=False)`)
 
 .. code-block:: python
 
