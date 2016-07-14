@@ -248,5 +248,8 @@ if __name__ == '__main__':
 	d.still.works 
 	print(d)
 	d = DotMap(_dynamic=False)
-	d.no.creation
-	print(d)
+	try:
+		d.no.creation
+		print(d)
+	except KeyError:
+		print('KeyError caught')
