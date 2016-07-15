@@ -8,26 +8,27 @@ class DotMap(OrderedDict):
 	def __init__(self, *args, **kwargs):
 		self._map = OrderedDict()
 		self._dynamic = True
+		if kwargs:
+			if '_dynamic' in kwargs:
+				self._dynamic = kwargs['_dynamic']
 		if args:
 			d = args[0]
 			if isinstance(d, dict):
 				for k,v in self.__call_items(d):
 					if type(v) is dict:
-						v = DotMap(v)
+						v = DotMap(v, _dynamic=self._dynamic)
 					if type(v) is list:
 						l = []
 						for i in v:
 							n = i
 							if type(i) is dict:
-								n = DotMap(i)
+								n = DotMap(i, _dynamic=self._dynamic)
 							l.append(n)
 						v = l
 					self._map[k] = v
 		if kwargs:
 			for k,v in self.__call_items(kwargs):
-				if k == '_dynamic':
-					self._dynamic = v
-				else:
+				if k is not '_dynamic':
 					self._map[k] = v
 
 	def __call_items(self, obj):
@@ -251,5 +252,19 @@ if __name__ == '__main__':
 	try:
 		d.no.creation
 		print(d)
+	except KeyError:
+		print('KeyError caught')
+	d = {'sub':{'a':1}}
+	dm = DotMap(d)
+	print(dm)
+	dm.still.works
+	dm.sub.still.works
+	print(dm)
+	dm2 = DotMap(d,_dynamic=False)
+	try:
+		dm.sub.yes.creation
+		print(dm)
+		dm2.sub.no.creation
+		print(dm)
 	except KeyError:
 		print('KeyError caught')
