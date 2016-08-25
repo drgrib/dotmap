@@ -53,19 +53,19 @@ class DotMap(OrderedDict):
 	def __setitem__(self, k, v):
 		self._map[k] = v
 	def __getitem__(self, k):
-		if k not in self._map and self._dynamic:
+		if k not in self._map and self._dynamic and k != '_ipython_canary_method_should_not_exist_':
 			# automatically extend to new DotMap
 			self[k] = DotMap()
 		return self._map[k]
 
 	def __setattr__(self, k, v):
-		if k in {'_map','_dynamic'}:
+		if k in {'_map','_dynamic', '_ipython_canary_method_should_not_exist_'}:
 			super(DotMap, self).__setattr__(k,v)
 		else:
 			self[k] = v
 
 	def __getattr__(self, k):
-		if k == {'_map','_dynamic'}:
+		if k == {'_map','_dynamic','_ipython_canary_method_should_not_exist_'}:
 			super(DotMap, self).__getattr__(k)
 		else:
 			return self[k]
