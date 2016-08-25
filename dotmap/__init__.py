@@ -1,3 +1,4 @@
+from __future__ import print_function
 from collections import OrderedDict
 from pprint import pprint
 from sys import version_info
@@ -90,6 +91,14 @@ class DotMap(OrderedDict):
 		for k,v in self.items():
 			if type(v) is DotMap:
 				v = v.toDict()
+			elif type(v) is list:
+				l = []
+				for i in v:
+					n = i
+					if type(i) is DotMap:
+						n = i.toDict()
+					l.append(n)
+				v = l
 			d[k] = v
 		return d
 
@@ -242,6 +251,11 @@ if __name__ == '__main__':
 	print(d.empty())
 	d.a = 1
 	print(d.empty())
+	print()
+	x = DotMap({'a': 'b'})
+	print(x.b.empty()) # True (and creates empty DotMap)
+	print(x.b) # DotMap()
+	print(x.b.empty()) # also True
 
 	# _dynamic
 	print('\n== _dynamic ==')
@@ -268,3 +282,9 @@ if __name__ == '__main__':
 		print(dm)
 	except KeyError:
 		print('KeyError caught')
+
+	# _dynamic
+	print('\n== toDict() ==')
+	conf = DotMap()
+	conf.dep = DotMap(facts=DotMap(operating_systems=DotMap(os_CentOS_7=True), virtual_data_centers=[DotMap(name='vdc1', members=['sp1'], options=DotMap(secret_key='badsecret', description='My First VDC')), DotMap(name='vdc2', members=['sp2'], options=DotMap(secret_key='badsecret', description='My Second VDC'))], install_node='192.168.2.200', replication_group_defaults=DotMap(full_replication=False, enable_rebalancing=False, description='Default replication group description', allow_all_namespaces=False), node_defaults=DotMap(ntp_servers=['192.168.2.2'], ecs_root_user='root', dns_servers=['192.168.2.2'], dns_domain='local', ecs_root_pass='badpassword'), storage_pools=[DotMap(name='sp1', members=['192.168.2.220'], options=DotMap(ecs_block_devices=['/dev/vdb'], description='My First SP')), DotMap(name='sp2', members=['192.168.2.221'], options=DotMap(protected=False, ecs_block_devices=['/dev/vdb'], description='My Second SP'))], storage_pool_defaults=DotMap(cold_storage_enabled=False, protected=False, ecs_block_devices=['/dev/vdc'], description='Default storage pool description'), virtual_data_center_defaults=DotMap(secret_key='badsecret', description='Default virtual data center description'), management_clients=['192.168.2.0/24'], replication_groups=[DotMap(name='rg1', members=['vdc1', 'vdc2'], options=DotMap(description='My RG'))]), lawyers=DotMap(license_accepted=True))
+	print(conf.dep.toDict()['facts']['replication_groups'])
