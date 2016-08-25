@@ -112,6 +112,10 @@ class DotMap(OrderedDict):
 	def values(self):
 		return self._map.values()
 
+	# ipython support
+	def __dir__(self):
+		return self.keys()
+
 	@classmethod
 	def parseOther(self, other):
 		if type(other) is DotMap:
