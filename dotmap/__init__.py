@@ -79,7 +79,11 @@ class DotMap(OrderedDict):
 	def __str__(self):
 		items = []
 		for k,v in self.__call_items(self._map):
-			items.append('{0}={1}'.format(k, repr(v)))
+			# bizarre recursive assignment situation (why someone would do this is beyond me)
+			if id(v) == id(self):
+				items.append('{0}=DotMap(...)'.format(k))
+			else:
+				items.append('{0}={1}'.format(k, repr(v)))
 		out = 'DotMap({0})'.format(', '.join(items))
 		return out
 
@@ -292,3 +296,20 @@ if __name__ == '__main__':
 	conf = DotMap()
 	conf.dep = DotMap(facts=DotMap(operating_systems=DotMap(os_CentOS_7=True), virtual_data_centers=[DotMap(name='vdc1', members=['sp1'], options=DotMap(secret_key='badsecret', description='My First VDC')), DotMap(name='vdc2', members=['sp2'], options=DotMap(secret_key='badsecret', description='My Second VDC'))], install_node='192.168.2.200', replication_group_defaults=DotMap(full_replication=False, enable_rebalancing=False, description='Default replication group description', allow_all_namespaces=False), node_defaults=DotMap(ntp_servers=['192.168.2.2'], ecs_root_user='root', dns_servers=['192.168.2.2'], dns_domain='local', ecs_root_pass='badpassword'), storage_pools=[DotMap(name='sp1', members=['192.168.2.220'], options=DotMap(ecs_block_devices=['/dev/vdb'], description='My First SP')), DotMap(name='sp2', members=['192.168.2.221'], options=DotMap(protected=False, ecs_block_devices=['/dev/vdb'], description='My Second SP'))], storage_pool_defaults=DotMap(cold_storage_enabled=False, protected=False, ecs_block_devices=['/dev/vdc'], description='Default storage pool description'), virtual_data_center_defaults=DotMap(secret_key='badsecret', description='Default virtual data center description'), management_clients=['192.168.2.0/24'], replication_groups=[DotMap(name='rg1', members=['vdc1', 'vdc2'], options=DotMap(description='My RG'))]), lawyers=DotMap(license_accepted=True))
 	print(conf.dep.toDict()['facts']['replication_groups'])
+
+	# recursive assignment
+	print('\n== recursive assignment ==')
+	# dict
+	d = dict()
+	d['a'] = 5
+	print(id(d))
+	d['other'] = d
+	print(d)
+	print(d['other']['other']['other'])
+	# DotMap
+	m = DotMap()
+	m.a = 5
+	print(id(m))
+	m.other = m
+	print(m.other.other.other)
+	print(m)
