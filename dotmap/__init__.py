@@ -307,14 +307,14 @@ if __name__ == '__main__':
 	d = dict()
 	d['a'] = 5
 	print(id(d))
-	d['other'] = d
+	d['recursive'] = d
 	print(d)
-	print(d['other']['other']['other'])
+	print(d['recursive']['recursive']['recursive'])
 	# DotMap
 	m = DotMap()
 	m.a = 5
 	print(id(m))
-	m.other = m
-	print(m.other.other.other)
+	m.recursive = m
+	print(m.recursive.recursive.recursive)
 	print(m)
 	print(m.toDict())
