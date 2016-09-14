@@ -94,7 +94,11 @@ class DotMap(OrderedDict):
 		d = {}
 		for k,v in self.items():
 			if type(v) is DotMap:
-				v = v.toDict()
+				# bizarre recursive assignment support
+				if id(v) == id(self):
+					v = d
+				else:
+					v = v.toDict()
 			elif type(v) is list:
 				l = []
 				for i in v:
@@ -313,3 +317,4 @@ if __name__ == '__main__':
 	m.other = m
 	print(m.other.other.other)
 	print(m)
+	print(m.toDict())
