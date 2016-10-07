@@ -161,7 +161,7 @@ class DotMap(OrderedDict):
 	def clear(self):
 		self._map.clear()
 	def copy(self):
-		return self
+		return DotMap(self.toDict())
 	def get(self, key, default=None):
 		return self._map.get(key, default)
 	def has_key(self, key):
