@@ -1,10 +1,10 @@
 from __future__ import print_function
-from collections import OrderedDict
+from collections import OrderedDict, MutableMapping
 from pprint import pprint
 from sys import version_info
 from inspect import ismethod
 
-class DotMap(OrderedDict):
+class DotMap(MutableMapping):
 
 	def __init__(self, *args, **kwargs):
 		self._map = OrderedDict()
@@ -197,6 +197,8 @@ class DotMap(OrderedDict):
 	def __setstate__(self, d): self.__dict__.update(d)
 
 if __name__ == '__main__':
+	# basics
+	print('\n== basics ==')
 	d = {
 		'a':1,
 		'b':2,
@@ -318,3 +320,30 @@ if __name__ == '__main__':
 	print(m.recursive.recursive.recursive)
 	print(m)
 	print(m.toDict())
+
+	# kwarg
+	print('\n== kwarg ==')
+	def test(**kwargs):
+		print(kwargs)
+	class D:
+		def keys(self):
+			return ['a', 'b']
+		def __getitem__(self, key):
+			return 0
+	a = {'1':'a', '2':'b'}
+	b = DotMap(a, _dynamic=False)
+	o = OrderedDict(a)
+	test(**a)
+	test(**b.toDict())
+	test(**o)
+	test(**D())
+
+	# ordering
+	print('\n== ordering ==')
+	m = DotMap()
+	m.alpha = 1
+	m.bravo = 2
+	m.charlie = 3
+	m.delta = 4
+	for k,v in m.items():
+		print(k,v)
