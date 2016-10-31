@@ -354,3 +354,5 @@ if __name__ == '__main__':
 	o = OrderedDict()
 	print(isinstance(d, dict))
 	print(isinstance(o, dict))
+	e = DotMap(m)
+	print(e)
