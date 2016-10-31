@@ -4,7 +4,7 @@ from pprint import pprint
 from sys import version_info
 from inspect import ismethod
 
-class DotMap(MutableMapping):
+class DotMap(MutableMapping, OrderedDict):
 
 	def __init__(self, *args, **kwargs):
 		self._map = OrderedDict()
@@ -347,3 +347,10 @@ if __name__ == '__main__':
 	m.delta = 4
 	for k,v in m.items():
 		print(k,v)
+
+	# subclassing
+	print('\n== subclassing ==')
+	d = DotMap()
+	o = OrderedDict()
+	print(isinstance(d, dict))
+	print(isinstance(o, dict))
