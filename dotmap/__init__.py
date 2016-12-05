@@ -162,6 +162,10 @@ class DotMap(MutableMapping, OrderedDict):
 		self._map.clear()
 	def copy(self):
 		return DotMap(self.toDict())
+	def __copy__(self):
+		return self.copy()
+	def __deepcopy__(self, memo=None):
+		return self.copy()
 	def get(self, key, default=None):
 		return self._map.get(key, default)
 	def has_key(self, key):
@@ -356,3 +360,14 @@ if __name__ == '__main__':
 	print(isinstance(o, dict))
 	e = DotMap(m)
 	print(e)
+
+	# deepcopy
+	print('\n== deepcopy ==')
+	import copy
+	t = DotMap()
+	t.a = 1
+	t.b = 3
+	f = copy.deepcopy(t)
+	t.a = 2
+	print(t)
+	print(f)
