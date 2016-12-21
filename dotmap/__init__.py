@@ -161,7 +161,7 @@ class DotMap(MutableMapping, OrderedDict):
 	def clear(self):
 		self._map.clear()
 	def copy(self):
-		return DotMap(self.toDict())
+		return DotMap(self)
 	def __copy__(self):
 		return self.copy()
 	def __deepcopy__(self, memo=None):
@@ -371,3 +371,21 @@ if __name__ == '__main__':
 	t.a = 2
 	print(t)
 	print(f)
+
+	# copy order preservation
+	print('\n== copy order preservation ==')
+	t = DotMap()
+	t.a = 1
+	t.b = 2
+	t.c = 3
+	copies = []
+	print(id(t))
+	for i in range(3):
+		copyMap = copy.deepcopy(t)
+		copies.append(copyMap)
+		print(id(copyMap))
+	print()
+	for copyMap in copies:
+		for k,v in copyMap.items():
+			print(k,v)
+		print()
