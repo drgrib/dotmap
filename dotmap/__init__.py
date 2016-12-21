@@ -243,6 +243,8 @@ class DotMap(MutableMapping, OrderedDict):
 		lines = []
 		previous = None
 		for k,v in self.items():
+			if previous == 'DotMap':
+				lines.append('-')
 			out = ''
 			if isinstance(v,DotMap):
 				name = k
@@ -251,8 +253,6 @@ class DotMap(MutableMapping, OrderedDict):
 				lines.append(out)
 				previous = 'DotMap'
 			else:
-				if previous == 'DotMap':
-					lines.append('-')
 				out = self._getValueStr(k,v)
 				lines.append(out)
 				previous = 'other'
@@ -463,4 +463,10 @@ if __name__ == '__main__':
 		"Refrigerator",
 	])
 	t.haiku = haiku
+	t.teams.blue = 1
+	t.teams.red = 2
+	t.teams.green = 3
+	t.colorsr.blue = 1
+	t.colors.red = 2
+	t.colors.green = 3
 	print(t.bannerStr())
