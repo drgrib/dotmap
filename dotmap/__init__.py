@@ -241,6 +241,7 @@ class DotMap(MutableMapping, OrderedDict):
 		return finalOut
 	def bannerStr(self):
 		lines = []
+		previous = None
 		for k,v in self.items():
 			out = ''
 			if isinstance(v,DotMap):
@@ -248,10 +249,13 @@ class DotMap(MutableMapping, OrderedDict):
 				subMap = v
 				out = self._getSubMapStr(name,subMap)
 				lines.append(out)
-				lines.append('-')
+				previous = 'DotMap'
 			else:
+				if previous == 'DotMap':
+					lines.append('-')
 				out = self._getValueStr(k,v)
 				lines.append(out)
+				previous = 'other'
 		lines.append('--')
 		s = '\n'.join(lines)
 		return s
