@@ -247,9 +247,11 @@ class DotMap(MutableMapping, OrderedDict):
 				name = k
 				subMap = v
 				out = self._getSubMapStr(name,subMap)
+				lines.append(out)
+				lines.append('-')
 			else:
 				out = self._getValueStr(k,v)
-			lines.append(out)
+				lines.append(out)
 		lines.append('--')
 		s = '\n'.join(lines)
 		return s
@@ -451,4 +453,10 @@ if __name__ == '__main__':
 	t.cities.DC = 2
 	t.cities.London.pop = 'many'
 	t.cities.London.weather = 'rain'
+	haiku = '\n'.join([
+		"Haikus are easy",
+		"But sometimes they don't make sense",
+		"Refrigerator",
+	])
+	t.haiku = haiku
 	print(t.bannerStr())
