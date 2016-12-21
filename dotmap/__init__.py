@@ -199,6 +199,61 @@ class DotMap(MutableMapping, OrderedDict):
 		return d
 	def __getstate__(self): return self.__dict__
 	def __setstate__(self, d): self.__dict__.update(d)
+	# bannerStr
+	def _getValueStr(self,k,v):
+		outV = v
+		multiLine = len(str(v).split('\n')) > 1
+		if multiLine:
+			# push to next line
+			outV = '\n' + v
+		out = '{} {}'.format(k,outV)
+		return out
+	def _getSubMapDotList(self, pre, name, subMap):
+		outList = []
+		if pre == '':
+			pre = name
+		else:
+			pre = '{}.{}'.format(pre,name)
+		def stamp(pre,k,v):
+			return '{}.{} {}'.format(pre,k,v)
+		for k,v in subMap.items():
+			if isinstance(v,DotMap) and v != DotMap():
+				subList = self._getSubMapDotList(pre,k,v)
+				outList.extend(subList)
+			else:
+				outList.append(stamp(pre,k,v))
+		return outList
+	def _getSubMapStr(self, name, subMap):
+		outList = ['== {} =='.format(name)]
+		for k,v in subMap.items():
+			if isinstance(v,DotMap) and v != DotMap():
+				# break down to dots
+				subList = self._getSubMapDotList('',k,v)
+				# add the divit
+				# subList = ['> {}'.format(i) for i in subList]
+				outList.extend(subList)
+			else:
+				out = self._getValueStr(k,v)
+				# out = '> {}'.format(out)
+				out = '{}'.format(out)
+				outList.append(out)
+		finalOut = '\n'.join(outList)
+		return finalOut
+	def bannerStr(self):
+		lines = []
+		for k,v in self.items():
+			out = ''
+			if isinstance(v,DotMap):
+				name = k
+				subMap = v
+				out = self._getSubMapStr(name,subMap)
+			else:
+				out = self._getValueStr(k,v)
+			lines.append(out)
+		lines.append('--')
+		s = '\n'.join(lines)
+		return s
+
 
 if __name__ == '__main__':
 	# basics
@@ -389,3 +444,11 @@ if __name__ == '__main__':
 		for k,v in copyMap.items():
 			print(k,v)
 		print()
+
+	# bannerStr
+	print('\n== bannerStr ==')
+	t.cities.LA = 1
+	t.cities.DC = 2
+	t.cities.London.pop = 'many'
+	t.cities.London.weather = 'rain'
+	print(t.bannerStr())
