@@ -200,12 +200,24 @@ class DotMap(MutableMapping, OrderedDict):
 	def __getstate__(self): return self.__dict__
 	def __setstate__(self, d): self.__dict__.update(d)
 	# bannerStr
+	def _getListStr(self,items):
+		out = '['
+		mid = ''
+		for i in items:
+			mid += '  {}\n'.format(i)
+		if mid != '':
+			mid = '\n' + mid
+		out += mid
+		out += ']'
+		return out
 	def _getValueStr(self,k,v):
 		outV = v
 		multiLine = len(str(v).split('\n')) > 1
 		if multiLine:
 			# push to next line
 			outV = '\n' + v
+		if type(v) is list:
+			outV = self._getListStr(v)
 		out = '{} {}'.format(k,outV)
 		return out
 	def _getSubMapDotList(self, pre, name, subMap):
@@ -466,7 +478,10 @@ if __name__ == '__main__':
 	t.teams.blue = 1
 	t.teams.red = 2
 	t.teams.green = 3
-	t.colorsr.blue = 1
+	t.colors.blue = 1
 	t.colors.red = 2
 	t.colors.green = 3
+	t.numbers.short = list(range(4))
+	t.numbers.early = list(range(10))
+	t.numbers.backwards = list(range(10,-1,-1))
 	print(t.bannerStr())
