@@ -227,7 +227,8 @@ class DotMap(MutableMapping, OrderedDict):
 		else:
 			pre = '{}.{}'.format(pre,name)
 		def stamp(pre,k,v):
-			return '{}.{} {}'.format(pre,k,v)
+			valStr = self._getValueStr(k,v)
+			return '{}.{}'.format(pre, valStr)
 		for k,v in subMap.items():
 			if isinstance(v,DotMap) and v != DotMap():
 				subList = self._getSubMapDotList(pre,k,v)
@@ -484,4 +485,5 @@ if __name__ == '__main__':
 	t.numbers.short = list(range(4))
 	t.numbers.early = list(range(10))
 	t.numbers.backwards = list(range(10,-1,-1))
+	t.deepLog.deeper.Q = list(range(4))
 	print(t.bannerStr())
