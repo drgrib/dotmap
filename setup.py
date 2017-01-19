@@ -1,7 +1,7 @@
 from setuptools import setup
 
 setup(
-	version = '1.2.14',
+	version = '1.2.15',
 	name = 'dotmap',
 	packages = ['dotmap'], # this must be the same as the name above
 	description = 'ordered, dynamically-expandable dot-access dictionary',
