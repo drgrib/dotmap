@@ -4,8 +4,15 @@ from pprint import pprint
 from sys import version_info
 from inspect import ismethod
 
-class DotMap(MutableMapping, OrderedDict):
+# for debugging
+def here(item=None):
+	out = 'here'
+	if item != None:
+		out += '({})'.format(item)
+	print(out)
 
+
+class DotMap(MutableMapping, OrderedDict):
 	def __init__(self, *args, **kwargs):
 		self._map = OrderedDict()
 		self._dynamic = True
@@ -16,7 +23,7 @@ class DotMap(MutableMapping, OrderedDict):
 			d = args[0]
 			if isinstance(d, dict):
 				for k,v in self.__call_items(d):
-					if type(v) is dict:
+					if isinstance(v, dict):
 						v = DotMap(v, _dynamic=self._dynamic)
 					if type(v) is list:
 						l = []
@@ -487,3 +494,19 @@ if __name__ == '__main__':
 	t.numbers.backwards = list(range(10,-1,-1))
 	t.deepLog.deeper.Q = list(range(4))
 	print(t.bannerStr())
+
+	# sub-DotMap deepcopy
+	print('\n== sub-DotMap deepcopy ==')
+	import copy
+	l = []
+	d = {'d1': {'d2': ''}}
+	m = DotMap(d)
+	for i in range(3):
+		x = copy.deepcopy(m)
+		x.d1.d2 = i
+		l.append(x)
+	for m in l:
+		print(m)
+
+	# final print
+	print()
