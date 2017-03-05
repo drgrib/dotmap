@@ -91,7 +91,8 @@ class DotMap(MutableMapping, OrderedDict):
 				items.append('{0}=DotMap(...)'.format(k))
 			else:
 				items.append('{0}={1}'.format(k, repr(v)))
-		out = 'DotMap({0})'.format(', '.join(items))
+                joined = ', '.join(items)
+		out = '{0}({1})'.format(self.__class__.__name__, joined)
 		return out
 
 	def __repr__(self):
@@ -136,7 +137,7 @@ class DotMap(MutableMapping, OrderedDict):
 		if type(other) is DotMap:
 			return other._map
 		else:
-			return other	
+			return other
 	def __cmp__(self, other):
 		other = DotMap.parseOther(other)
 		return self._map.__cmp__(other)
@@ -331,19 +332,19 @@ if __name__ == '__main__':
 	}
 	parent = DotMap(parentDict)
 	print([x.name for x in parent.children])
-	
+
 	# pickle
 	print('\n== pickle ==')
 	import pickle
 	s = pickle.dumps(parent)
 	d = pickle.loads(s)
 	print(d)
-	
+
 	# init from DotMap
 	print('\n== init from DotMap ==')
 	e = DotMap(d)
 	print(e)
-	
+
 	# empty
 	print('\n== empty() ==')
 	d = DotMap()
@@ -359,7 +360,7 @@ if __name__ == '__main__':
 	# _dynamic
 	print('\n== _dynamic ==')
 	d = DotMap()
-	d.still.works 
+	d.still.works
 	print(d)
 	d = DotMap(_dynamic=False)
 	try:
