@@ -1,5 +1,6 @@
 from __future__ import print_function
 from collections import OrderedDict, MutableMapping
+from json import dumps
 from pprint import pprint
 from sys import version_info
 from inspect import ismethod
@@ -118,8 +119,11 @@ class DotMap(MutableMapping, OrderedDict):
 			d[k] = v
 		return d
 
-	def pprint(self):
-		pprint(self.toDict())
+	def pprint(self, pformat='dict'):
+		if pformat == 'json':
+			print(dumps(self.toDict(), indent=4, sort_keys=True))
+		else:
+			pprint(self.toDict())
 
 	def empty(self):
 		return (not any(self))
