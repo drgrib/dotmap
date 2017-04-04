@@ -1,7 +1,7 @@
 from __future__ import print_function
 from collections import OrderedDict, MutableMapping
 from json import dumps
-from pprint import pprint
+import pprint
 from sys import version_info
 from inspect import ismethod
 
@@ -119,11 +119,14 @@ class DotMap(MutableMapping, OrderedDict):
 			d[k] = v
 		return d
 
-	def pprint(self, pformat='dict'):
-		if pformat == 'json':
-			print(dumps(self.toDict(), indent=4, sort_keys=True))
+	def pprint(self, format='dict'):
+		print(self.pformat(format))
+
+        def pformat(self, format='dict'):
+                if format == 'json':
+			return dumps(self.toDict(), indent=4, sort_keys=True)
 		else:
-			pprint(self.toDict())
+			return pprint.pformat(self.toDict())
 
 	def empty(self):
 		return (not any(self))
@@ -314,8 +317,12 @@ if __name__ == '__main__':
 	print('a' in dd)
 	print('c' in dd)
 	dd.c.a = 1
+        print(" -- dd.toDict()")
 	print(dd.toDict())
+        print(" -- dd.pprint()")
 	dd.pprint()
+        print(" -- dd.pprint(format='json')")
+	dd.pprint(format='json')
 	print
 	print(dd.values())
 	dm = DotMap(name='Steve', job='programmer')
