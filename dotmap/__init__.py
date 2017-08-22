@@ -115,7 +115,10 @@ class DotMap(MutableMapping, OrderedDict):
 					if type(i) is DotMap:
 						n = i.toDict()
 					l.append(n)
-				v = (type(v) is tuple) and tuple(l) or l
+				if type(v) is tuple:
+					v = tuple(l)
+				else:
+					v = l
 			d[k] = v
 		return d
 
@@ -512,6 +515,12 @@ if __name__ == '__main__':
 		l.append(x)
 	for m in l:
 		print(m)
+
+	# tuple toDict
+	print('\n== DotMap tuple toDict ==')
+	m = DotMap({'a': 1, 'b': (11, 22, DotMap({'c': 3}))})
+	d = m.toDict()
+	print(d)
 
 	# final print
 	print()
