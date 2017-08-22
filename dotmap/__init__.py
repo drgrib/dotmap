@@ -108,14 +108,14 @@ class DotMap(MutableMapping, OrderedDict):
 					v = d
 				else:
 					v = v.toDict()
-			elif type(v) is list:
+			elif type(v) in (list, tuple):
 				l = []
 				for i in v:
 					n = i
 					if type(i) is DotMap:
 						n = i.toDict()
 					l.append(n)
-				v = l
+				v = (type(v) is tuple) and tuple(l) or l
 			d[k] = v
 		return d
 
