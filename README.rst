@@ -4,7 +4,7 @@ DotMap
 
 :code:`DotMap` is a dot-access :code:`dict` subclass that
 
-* has dynamic child creation
+* has dynamic hierarchy creation
 * can be initialized with keys
 * easily initializes from :code:`dict`
 * easily converts to :code:`dict`
