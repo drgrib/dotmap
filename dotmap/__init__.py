@@ -73,7 +73,7 @@ class DotMap(MutableMapping, OrderedDict):
 			self[k] = v
 
 	def __getattr__(self, k):
-		if k == {'_map','_dynamic','_ipython_canary_method_should_not_exist_'}:
+		if k in {'_map','_dynamic','_ipython_canary_method_should_not_exist_'}:
 			super(DotMap, self).__getattr__(k)
 		else:
 			return self[k]
@@ -521,6 +521,15 @@ if __name__ == '__main__':
 	m = DotMap({'a': 1, 'b': (11, 22, DotMap({'c': 3}))})
 	d = m.toDict()
 	print(d)
+
+	# unpacking tests
+	print('\n== Unpacking ==')
+	d = {'a':1}
+	print({**d})
+	m = DotMap(a=1)
+	print({**m.toDict()})
+	m = DotMap(a=1)
+	print({**m})
 
 	# final print
 	print()
