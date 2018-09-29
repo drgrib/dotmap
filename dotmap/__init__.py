@@ -523,6 +523,7 @@ if __name__ == '__main__':
 	print(d)
 
 	# unpacking tests
+	'''
 	print('\n== Unpacking ==')
 	d = {'a':1}
 	print({**d})
@@ -530,6 +531,7 @@ if __name__ == '__main__':
 	print({**m.toDict()})
 	m = DotMap(a=1)
 	print({**m})
+	'''
 
 	# final print
 	print()
