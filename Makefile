@@ -7,4 +7,4 @@ update:
 	git commit -am "update version"
 	git push origin master
 	sudo python3 setup.py sdist bdist_wheel
-	twine upload dist/*
+	twine upload --skip-existing dist/*
