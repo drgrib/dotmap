@@ -3,8 +3,8 @@
 `DotMap` is a dot-access `dict` subclass that
 * has dynamic hierarchy creation
 * can be initialized with keys
-* easily initializes from :code:`dict`
-* easily converts to :code:`dict`
+* easily initializes from `dict`
+* easily converts to `dict`
 * is ordered by insertion
 
 The key feature is exactly what you want: dot-access
@@ -17,7 +17,7 @@ print 'Hello ' + m.name
 # Hello Joe
 ```
 
-However, `DotMap` is a `dict` and you can treat it like a :code:`dict` as needed
+However, `DotMap` is a `dict` and you can treat it like a `dict` as needed
 
 ``` python
 print m['name']
@@ -41,7 +41,7 @@ And key initialization
 m = DotMap(a=1, b=2)
 ```
 
-You can initialize it from :code:`dict` and convert it to `dict`
+You can initialize it from `dict` and convert it to `dict`
 
 ``` python
 d = {'a':1, 'b':2}
