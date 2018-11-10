@@ -39,6 +39,24 @@ class ReadmeTestCase(unittest.TestCase):
         self.assertEqual(d2['a'], 1)
         self.assertEqual(d2['b'], 2)
 
+    def test_ordered_iteration(self):
+        m = DotMap()
+        m.people.john.age = 32
+        m.people.john.job = 'programmer'
+        m.people.mary.age = 24
+        m.people.mary.job = 'designer'
+        m.people.dave.age = 55
+        m.people.dave.job = 'manager'
+        expected = [
+            ('john', 32, 'programmer'),
+            ('mary', 24, 'designer'),
+            ('dave', 55, 'manager'),
+        ]
+        for i, (k, v) in enumerate(m.people.items()):
+            self.assertEqual(expected[i][0], k)
+            self.assertEqual(expected[i][1], v.age)
+            self.assertEqual(expected[i][2], v.job)
+
 
 class BaseTestCase(unittest.TestCase):
     '''Tests basic functionality'''
