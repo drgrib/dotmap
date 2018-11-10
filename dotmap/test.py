@@ -2,7 +2,22 @@ import unittest
 from __init__ import DotMap
 
 
-class BasicTestCase(unittest.TestCase):
+class ReadmeTestCase(unittest.TestCase):
+    '''Tests examples in README.md'''
+
+    def test_basic_use(self):
+        m = DotMap()
+        self.assertIsInstance(m, DotMap)
+        m.name = 'Joe'
+        self.assertEqual(m.name, 'Joe')
+        self.assertEqual('Hello ' + m.name, 'Hello Joe')
+        self.assertEqual(m['name'], 'Joe')
+        m.name += ' Smith'
+        m['name'] += ' Jr'
+        self.assertEqual(m.name, 'Joe Smith Jr')
+
+
+class BaseTestCase(unittest.TestCase):
     '''Tests basic functionality'''
 
     def setUp(self):
@@ -13,17 +28,17 @@ class BasicTestCase(unittest.TestCase):
         }
 
     def test_dict_init(self):
-        dm = DotMap(self.d)
-        self.assertIsInstance(dm, DotMap)
-        self.assertEqual(dm.a, 1)
-        self.assertEqual(dm.b, 2)
-        self.assertIsInstance(dm.subD, DotMap)
-        self.assertEqual(dm.subD.c, 3)
-        self.assertEqual(dm.subD.d, 4)
+        m = DotMap(self.d)
+        self.assertIsInstance(m, DotMap)
+        self.assertEqual(m.a, 1)
+        self.assertEqual(m.b, 2)
+        self.assertIsInstance(m.subD, DotMap)
+        self.assertEqual(m.subD.c, 3)
+        self.assertEqual(m.subD.d, 4)
 
     def test_copy(self):
-        dm = DotMap(self.d)
-        dm_copy = dm.copy()
+        m = DotMap(self.d)
+        dm_copy = m.copy()
         self.assertIsInstance(dm_copy, DotMap)
         self.assertEqual(dm_copy.a, 1)
         self.assertEqual(dm_copy.b, 2)
@@ -32,24 +47,24 @@ class BasicTestCase(unittest.TestCase):
         self.assertEqual(dm_copy.subD.d, 4)
 
     def test_fromkeys(self):
-        dm = DotMap.fromkeys([1, 2, 3], 'a')
-        self.assertEqual(len(dm), 3)
-        self.assertEqual(dm[1], 'a')
-        self.assertEqual(dm[2], 'a')
-        self.assertEqual(dm[3], 'a')
+        m = DotMap.fromkeys([1, 2, 3], 'a')
+        self.assertEqual(len(m), 3)
+        self.assertEqual(m[1], 'a')
+        self.assertEqual(m[2], 'a')
+        self.assertEqual(m[3], 'a')
 
     def test_dict_functionality(self):
-        dm = DotMap(self.d)
-        self.assertEqual(dm.get('a'), 1)
-        self.assertEqual(dm.get('f', 33), 33)
-        self.assertIsNone(dm.get('f'))
-        self.assertTrue(dm.has_key('a'))
-        self.assertFalse(dm.has_key('f'))
-        dm.update([('rat', 5), ('bum', 4)], dog=7, cat=9)
-        self.assertEqual(dm.rat, 5)
-        self.assertEqual(dm.bum, 4)
-        self.assertEqual(dm.dog, 7)
-        self.assertEqual(dm.cat, 9)
-        dm.update({'lol': 1, 'ba': 2})
-        self.assertEqual(dm.lol, 1)
-        self.assertEqual(dm.ba, 2)
+        m = DotMap(self.d)
+        self.assertEqual(m.get('a'), 1)
+        self.assertEqual(m.get('f', 33), 33)
+        self.assertIsNone(m.get('f'))
+        self.assertTrue(m.has_key('a'))
+        self.assertFalse(m.has_key('f'))
+        m.update([('rat', 5), ('bum', 4)], dog=7, cat=9)
+        self.assertEqual(m.rat, 5)
+        self.assertEqual(m.bum, 4)
+        self.assertEqual(m.dog, 7)
+        self.assertEqual(m.cat, 9)
+        m.update({'lol': 1, 'ba': 2})
+        self.assertEqual(m.lol, 1)
+        self.assertEqual(m.ba, 2)
