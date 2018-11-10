@@ -11,10 +11,33 @@ class ReadmeTestCase(unittest.TestCase):
         m.name = 'Joe'
         self.assertEqual(m.name, 'Joe')
         self.assertEqual('Hello ' + m.name, 'Hello Joe')
+        self.assertIsInstance(m, dict)
         self.assertEqual(m['name'], 'Joe')
         m.name += ' Smith'
         m['name'] += ' Jr'
         self.assertEqual(m.name, 'Joe Smith Jr')
+
+    def test_automatic_hierarchy(self):
+        m = DotMap()
+        m.people.steve.age = 31
+        self.assertEqual(m.people.steve.age, 31)
+
+    def test_key_init(self):
+        m = DotMap(a=1, b=2)
+        self.assertEqual(m.a, 1)
+        self.assertEqual(m.b, 2)
+
+    def test_dict_init(self):
+        d = {'a': 1, 'b': 2}
+        m = DotMap(d)
+        self.assertEqual(m.a, 1)
+        self.assertEqual(m.b, 2)
+        d2 = m.toDict()
+        self.assertIsInstance(d2, dict)
+        self.assertNotIsInstance(d2, DotMap)
+        self.assertEqual(len(d2), 2)
+        self.assertEqual(d2['a'], 1)
+        self.assertEqual(d2['b'], 2)
 
 
 class BaseTestCase(unittest.TestCase):
