@@ -1,5 +1,5 @@
 import unittest
-from dotmap import DotMap
+from __init__ import DotMap
 
 
 class BasicTestCase(unittest.TestCase):
