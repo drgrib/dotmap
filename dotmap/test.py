@@ -12,6 +12,7 @@ class ReadmeTestCase(unittest.TestCase):
         self.assertEqual(m.name, 'Joe')
         self.assertEqual('Hello ' + m.name, 'Hello Joe')
         self.assertIsInstance(m, dict)
+        self.assertTrue(issubclass(m.__class__, dict))
         self.assertEqual(m['name'], 'Joe')
         m.name += ' Smith'
         m['name'] += ' Jr'
@@ -27,7 +28,7 @@ class ReadmeTestCase(unittest.TestCase):
         self.assertEqual(m.a, 1)
         self.assertEqual(m.b, 2)
 
-    def test_dict_init(self):
+    def test_dict_conversion(self):
         d = {'a': 1, 'b': 2}
         m = DotMap(d)
         self.assertEqual(m.a, 1)
@@ -109,3 +110,40 @@ class BaseTestCase(unittest.TestCase):
         m.update({'lol': 1, 'ba': 2})
         self.assertEqual(m.lol, 1)
         self.assertEqual(m.ba, 2)
+        ordered_keys = [
+            'a',
+            'b',
+            'subD',
+            'rat',
+            'bum',
+            'dog',
+            'cat',
+            'lol',
+            'ba',
+        ]
+        for i, k in enumerate(m):
+            self.assertEqual(ordered_keys[i], k)
+        self.assertTrue('a' in m)
+        self.assertFalse('c' in m)
+        ordered_values = [1, 2, DotMap(c=3, d=4), 5, 4, 7, 9, 1, 2]
+        for i, v in enumerate(m.values()):
+            self.assertEqual(ordered_values[i], v)
+        self.assertTrue('c' in m.subD)
+        self.assertTrue(len(m.subD), 2)
+        del m.subD.c
+        self.assertFalse('c' in m.subD)
+        self.assertTrue(len(m.subD), 1)
+
+    def test_list_comprehension(self):
+        parentDict = {
+            'name': 'Father1',
+            'children': [
+                {'name': 'Child1'},
+                {'name': 'Child2'},
+                {'name': 'Child3'},
+            ]
+        }
+        parent = DotMap(parentDict)
+        ordered_names = ['Child1', 'Child2', 'Child3']
+        comp = [x.name for x in parent.children]
+        self.assertEqual(ordered_names, comp)
