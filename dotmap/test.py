@@ -147,3 +147,26 @@ class BaseTestCase(unittest.TestCase):
         ordered_names = ['Child1', 'Child2', 'Child3']
         comp = [x.name for x in parent.children]
         self.assertEqual(ordered_names, comp)
+
+
+class PickleTestCase(unittest.TestCase):
+    '''Tests pickle functionality'''
+
+    def setUp(self):
+        self.d = {
+            'a': 1,
+            'b': 2,
+            'subD': {'c': 3, 'd': 4}
+        }
+
+    def test_pickle(self):
+        import pickle
+        pm = DotMap(self.d)
+        s = pickle.dumps(pm)
+        m = pickle.loads(s)
+        self.assertIsInstance(m, DotMap)
+        self.assertEqual(m.a, 1)
+        self.assertEqual(m.b, 2)
+        self.assertIsInstance(m.subD, DotMap)
+        self.assertEqual(m.subD.c, 3)
+        self.assertEqual(m.subD.d, 4)
