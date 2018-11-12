@@ -13,18 +13,18 @@ The key feature is exactly what you want: dot-access
 from dotmap import DotMap
 m = DotMap()
 m.name = 'Joe'
-print 'Hello ' + m.name
+print('Hello ' + m.name)
 # Hello Joe
 ```
 
 However, `DotMap` is a `dict` and you can treat it like a `dict` as needed
 
 ``` python
-print m['name']
+print(m['name'])
 # Joe
 m.name += ' Smith'
 m['name'] += ' Jr'
-print m.name
+print(m.name)
 # Joe Smith Jr
 ```
 
@@ -47,10 +47,10 @@ You can initialize it from `dict` and convert it to `dict`
 d = {'a':1, 'b':2}
 
 m = DotMap(d)
-print m
+print(m)
 # DotMap(a=1, b=2)
 
-print m.toDict()
+print(m.toDict())
 # {'a': 1, 'b': 2}
 ```
 
@@ -67,7 +67,7 @@ m.people.dave.age = 55
 m.people.dave.job = 'manager'
 
 for k, v in m.people.items():
-	print k, v
+	print(k, v)
 print
 
 # john DotMap(age=32, job='programmer')
