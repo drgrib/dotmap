@@ -256,3 +256,10 @@ class DeepCopyTestCase(unittest.TestCase):
         for i, (k, v) in enumerate(deepCopy.iteritems()):
             self.assertEqual(k, orderedPairs[i][0])
             self.assertEqual(v, orderedPairs[i][1])
+
+
+class DotMapTupleToDictTestCase(unittest.TestCase):
+    def test(self):
+        m = DotMap({'a': 1, 'b': (11, 22, DotMap({'c': 3}))})
+        d = m.toDict()
+        self.assertEqual(d, {'a': 1, 'b': (11, 22, {'c': 3})})
