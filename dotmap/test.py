@@ -215,3 +215,28 @@ class RecursiveTestCase(unittest.TestCase):
         d['recursive']['recursive']['recursive']
         self.assertEqual(id(d['recursive']['recursive']['recursive']), d_id)
         self.assertEqual(str(d), '''{'a': 5, 'recursive': {...}}''')
+
+
+class kwargTestCase(unittest.TestCase):
+    def test(self):
+        a = {'1': 'a', '2': 'b'}
+        b = DotMap(a, _dynamic=False)
+
+        def capture(**kwargs):
+            return kwargs
+        self.assertEqual(a, capture(**b.toDict()))
+
+
+class DeepCopyTestCase(unittest.TestCase):
+    def test(self):
+        import copy
+        original = DotMap()
+        original.a = 1
+        original.b = 3
+        shallowCopy = original
+        deepCopy = copy.deepcopy(original)
+        self.assertEqual(original, shallowCopy)
+        self.assertEqual(original, deepCopy)
+        original.a = 2
+        self.assertEqual(original, shallowCopy)
+        self.assertNotEqual(original, deepCopy)
