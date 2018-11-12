@@ -236,7 +236,23 @@ class DeepCopyTestCase(unittest.TestCase):
         shallowCopy = original
         deepCopy = copy.deepcopy(original)
         self.assertEqual(original, shallowCopy)
+        self.assertEqual(id(original), id(shallowCopy))
         self.assertEqual(original, deepCopy)
+        self.assertNotEqual(id(original), id(deepCopy))
         original.a = 2
         self.assertEqual(original, shallowCopy)
         self.assertNotEqual(original, deepCopy)
+
+    def test_order_preserved(self):
+        import copy
+        original = DotMap()
+        original.a = 1
+        original.b = 2
+        original.c = 3
+        deepCopy = copy.deepcopy(original)
+        orderedPairs = []
+        for k, v in original.iteritems():
+            orderedPairs.append((k, v))
+        for i, (k, v) in enumerate(deepCopy.iteritems()):
+            self.assertEqual(k, orderedPairs[i][0])
+            self.assertEqual(v, orderedPairs[i][1])
