@@ -27,16 +27,20 @@ class ReadmeTestCase(unittest.TestCase):
         self.assertEqual(m.b, 2)
 
     def test_dict_conversion(self):
-        d = {'a': 1, 'b': 2}
+        d = {'a': 1, 'b': 2, 'c': {'d': 3, 'e': 4}}
         m = DotMap(d)
         self.assertEqual(m.a, 1)
         self.assertEqual(m.b, 2)
         d2 = m.toDict()
         self.assertIsInstance(d2, dict)
         self.assertNotIsInstance(d2, DotMap)
-        self.assertEqual(len(d2), 2)
+        self.assertEqual(len(d2), 3)
         self.assertEqual(d2['a'], 1)
         self.assertEqual(d2['b'], 2)
+        self.assertNotIsInstance(d2['c'], DotMap)
+        self.assertEqual(len(d2['c']), 2)
+        self.assertEqual(d2['c']['d'], 3)
+        self.assertEqual(d2['c']['e'], 4)
 
     def test_ordered_iteration(self):
         m = DotMap()
@@ -194,3 +198,20 @@ class DynamicTestCase(unittest.TestCase):
         def assignNonDynamicWithInit():
             nonDynamicWithInit.no.creation
         self.assertRaises(KeyError, assignNonDynamicWithInit)
+
+
+class RecursiveTestCase(unittest.TestCase):
+    def test(self):
+        m = DotMap()
+        m.a = 5
+        m_id = id(m)
+        m.recursive = m
+        self.assertEqual(id(m.recursive.recursive.recursive), m_id)
+        self.assertEqual(str(m), '''DotMap(a=5, recursive=DotMap(...))''')
+        d = m.toDict()
+        d_id = id(d)
+        d['a'] = 5
+        d['recursive'] = d
+        d['recursive']['recursive']['recursive']
+        self.assertEqual(id(d['recursive']['recursive']['recursive']), d_id)
+        self.assertEqual(str(d), '''{'a': 5, 'recursive': {...}}''')
