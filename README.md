@@ -104,12 +104,12 @@ m.pprint(pformat='json')
 And many other features involving dots and dictionaries that will be immediately intuitive when used.
 
 ## A note on unpacking (using the `**` operator)
-Using `DotMap` as an argument for, e.g. a `kwarg` can be done like this
+Unpacking `DotMap` can be done like this
 ``` python
 m = DotMap()
 m.a = 1
-simple_kwarg = dict(**m.toDict())
-print(simple_kwarg)
+simple_unpack = dict(**m.toDict())
+print(simple_unpack)
 # {'a': 1}
 ```
 
