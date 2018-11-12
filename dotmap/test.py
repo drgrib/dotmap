@@ -263,3 +263,12 @@ class DotMapTupleToDictTestCase(unittest.TestCase):
         m = DotMap({'a': 1, 'b': (11, 22, DotMap({'c': 3}))})
         d = m.toDict()
         self.assertEqual(d, {'a': 1, 'b': (11, 22, {'c': 3})})
+
+
+class OrderedDictInitTestCase(unittest.TestCase):
+    def test(self):
+        from collections import OrderedDict
+        o = OrderedDict([('a', 1), ('b', 2), ('c', [OrderedDict([('d', 3)])])])
+        m = DotMap(o)
+        self.assertIsInstance(m, DotMap)
+        self.assertIsInstance(m.c[0], DotMap)

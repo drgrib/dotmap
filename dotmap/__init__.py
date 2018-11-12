@@ -30,7 +30,7 @@ class DotMap(MutableMapping, OrderedDict):
                         l = []
                         for i in v:
                             n = i
-                            if type(i) is dict:
+                            if isinstance(i, dict):
                                 n = DotMap(i, _dynamic=self._dynamic)
                             l.append(n)
                         v = l
