@@ -1,0 +1,8 @@
+.vscode/
+.vsgit/
+MANIFEST
+build/
+dist/
+dotmap.egg-info/
+dotmap/__init__.pyc
+dotmap/__pycache__/
