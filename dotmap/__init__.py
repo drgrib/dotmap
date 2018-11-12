@@ -22,10 +22,16 @@ class DotMap(MutableMapping, OrderedDict):
                 self._dynamic = kwargs['_dynamic']
         if args:
             d = args[0]
+            # for recursive assignment handling
+            trackedIDs = {id(d): self}
             if isinstance(d, dict):
                 for k,v in self.__call_items(d):
                     if isinstance(v, dict):
-                        v = DotMap(v, _dynamic=self._dynamic)
+                        if id(v) in trackedIDs:
+                            v = trackedIDs[id(v)]
+                        else:
+                            v = DotMap(v, _dynamic=self._dynamic)
+                            trackedIDs[id(v)] = v
                     if type(v) is list:
                         l = []
                         for i in v:
@@ -87,7 +93,7 @@ class DotMap(MutableMapping, OrderedDict):
     def __str__(self):
         items = []
         for k,v in self.__call_items(self._map):
-            # bizarre recursive assignment situation (why someone would do this is beyond me)
+            # recursive assignment case
             if id(v) == id(self):
                 items.append('{0}=DotMap(...)'.format(k))
             else:
