@@ -215,6 +215,10 @@ class RecursiveTestCase(unittest.TestCase):
         d['recursive']['recursive']['recursive']
         self.assertEqual(id(d['recursive']['recursive']['recursive']), d_id)
         self.assertEqual(str(d), '''{'a': 5, 'recursive': {...}}''')
+        m2 = DotMap(d)
+        m2_id = id(m2)
+        self.assertEqual(id(m2.recursive.recursive.recursive), m2_id)
+        self.assertEqual(str(m2), '''DotMap(a=5, recursive=DotMap(...))''')
 
 
 class kwargTestCase(unittest.TestCase):
