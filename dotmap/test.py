@@ -3,8 +3,6 @@ from __init__ import DotMap
 
 
 class ReadmeTestCase(unittest.TestCase):
-    '''Tests examples in README.md'''
-
     def test_basic_use(self):
         m = DotMap()
         self.assertIsInstance(m, DotMap)
@@ -59,9 +57,7 @@ class ReadmeTestCase(unittest.TestCase):
             self.assertEqual(expected[i][2], v.job)
 
 
-class BaseTestCase(unittest.TestCase):
-    '''Tests basic functionality'''
-
+class BasicTestCase(unittest.TestCase):
     def setUp(self):
         self.d = {
             'a': 1,
@@ -150,8 +146,6 @@ class BaseTestCase(unittest.TestCase):
 
 
 class PickleTestCase(unittest.TestCase):
-    '''Tests pickle functionality'''
-
     def setUp(self):
         self.d = {
             'a': 1,
@@ -159,7 +153,7 @@ class PickleTestCase(unittest.TestCase):
             'subD': {'c': 3, 'd': 4}
         }
 
-    def test_pickle(self):
+    def test(self):
         import pickle
         pm = DotMap(self.d)
         s = pickle.dumps(pm)
@@ -170,3 +164,33 @@ class PickleTestCase(unittest.TestCase):
         self.assertIsInstance(m.subD, DotMap)
         self.assertEqual(m.subD.c, 3)
         self.assertEqual(m.subD.d, 4)
+
+
+class EmptyTestCase(unittest.TestCase):
+    def test(self):
+        m = DotMap()
+        self.assertTrue(m.empty())
+        m.a = 1
+        self.assertFalse(m.empty())
+        self.assertTrue(m.b.empty())
+        self.assertIsInstance(m.b, DotMap)
+
+
+class DynamicTestCase(unittest.TestCase):
+    def test(self):
+        m = DotMap()
+        m.still.works
+        m.sub.still.works
+        nonDynamic = DotMap(_dynamic=False)
+
+        def assignNonDynamic():
+            nonDynamic.no
+        self.assertRaises(KeyError, assignNonDynamic)
+
+        nonDynamicWithInit = DotMap(m, _dynamic=False)
+        nonDynamicWithInit.still.works
+        nonDynamicWithInit.sub.still.works
+
+        def assignNonDynamicWithInit():
+            nonDynamicWithInit.no.creation
+        self.assertRaises(KeyError, assignNonDynamicWithInit)
