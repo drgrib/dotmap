@@ -113,4 +113,4 @@ print(simple_kwarg)
 # {'a': 1}
 ```
 
-I've given multiple tries to trying to get the syntax to work with just `**m` and [it's just not worth the effort](https://stackoverflow.com/questions/3387691/how-to-perfectly-override-a-dict/39375731#39375731) when the workaround is this simple. If you can figure out a way to fully ace the `dict` subclass this way and still keep all the packages unit tests functioning, submit a PR and I'll be happy to review.
+I've given multiple tries to getting the syntax to work with just `**m` and [it's just not worth the effort](https://stackoverflow.com/questions/3387691/how-to-perfectly-override-a-dict/39375731#39375731) when the workaround is this simple. If you can figure out a way to fully ace the `dict` subclass this way and still keep all the unit tests functioning, submit a PR and I'll be happy to review.
