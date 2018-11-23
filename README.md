@@ -77,7 +77,7 @@ print
 
 It also has automatic counter initialization
 
-```
+``` python
 m = DotMap()
 for i in range(7):
 	m.counter += 1
@@ -87,7 +87,7 @@ print(m.counter)
 
 And automatic addition initializations of any other type
 
-```
+``` python
 m = DotMap()
 m.quote += 'lions'
 m.quote += ' and tigers'
