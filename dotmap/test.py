@@ -276,3 +276,48 @@ class OrderedDictInitTestCase(unittest.TestCase):
         m = DotMap(o)
         self.assertIsInstance(m, DotMap)
         self.assertIsInstance(m.c[0], DotMap)
+
+
+class EmptyAddTestCase(unittest.TestCase):
+    def test_base(self):
+        m = DotMap()
+        m.a.label = 'test'
+        m.a.counter += 2
+        self.assertIsInstance(m.a, DotMap)
+        self.assertEqual(m.a.label, 'test')
+        self.assertNotIsInstance(m.a.counter, DotMap)
+        self.assertIsInstance(m.a.counter, int)
+        self.assertEqual(m.a.counter, 2)
+        m.a.counter += 1
+
+    def test_proposal(self):
+        my_counters = DotMap()
+        pages = [
+            'once upon a time',
+            'there was like this super awesome prince',
+            'and there was this super rad princess',
+            'and they had a mutually respectful, egalitarian relationship',
+            'the end'
+        ]
+        for stuff in pages:
+            my_counters.page += 1
+        self.assertIsInstance(my_counters, DotMap)
+        self.assertNotIsInstance(my_counters.page, DotMap)
+        self.assertIsInstance(my_counters.page, int)
+        self.assertEqual(my_counters.page, 5)
+
+    def test_string_addition(self):
+        m = DotMap()
+        m.quote += 'lions'
+        m.quote += ' and tigers'
+        m.quote += ' and bears'
+        m.quote += ', oh my'
+        self.assertEqual(m.quote, 'lions and tigers and bears, oh my')
+
+    def test_type_error_raised(self):
+        m = DotMap()
+
+        def badAddition():
+            m.a += 1
+            m.a += ' and tigers'
+        self.assertRaises(TypeError, badAddition)

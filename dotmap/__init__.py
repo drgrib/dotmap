@@ -91,7 +91,7 @@ class DotMap(MutableMapping, OrderedDict):
         return self._map.__contains__(k)
 
     def __add__(self, other):
-        if not self.keys():
+        if self.empty():
             return other
         else:
             self_type = type(self).__name__
