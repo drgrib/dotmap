@@ -75,6 +75,28 @@ print
 # dave DotMap(age=55, job='manager')
 ```
 
+It also has automatic counter initialization
+
+```
+m = DotMap()
+for i in range(7):
+	m.counter += 1
+print(m.counter)
+# 7
+```
+
+And automatic addition initializations of any other type
+
+```
+m = DotMap()
+m.quote += 'lions'
+m.quote += ' and tigers'
+m.quote += ' and bears'
+m.quote += ', oh my'
+print(m.quote)
+# lions and tigers and bears, oh my
+```
+
 There is also built-in `pprint` as `dict` or `json` for debugging a large `DotMap`
 
 ``` python

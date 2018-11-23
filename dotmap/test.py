@@ -281,6 +281,14 @@ class OrderedDictInitTestCase(unittest.TestCase):
 class EmptyAddTestCase(unittest.TestCase):
     def test_base(self):
         m = DotMap()
+        for i in range(7):
+            m.counter += 1
+        self.assertNotIsInstance(m.counter, DotMap)
+        self.assertIsInstance(m.counter, int)
+        self.assertEqual(m.counter, 7)
+
+    def test_various(self):
+        m = DotMap()
         m.a.label = 'test'
         m.a.counter += 2
         self.assertIsInstance(m.a, DotMap)
@@ -289,6 +297,7 @@ class EmptyAddTestCase(unittest.TestCase):
         self.assertIsInstance(m.a.counter, int)
         self.assertEqual(m.a.counter, 2)
         m.a.counter += 1
+        self.assertEqual(m.a.counter, 3)
 
     def test_proposal(self):
         my_counters = DotMap()
