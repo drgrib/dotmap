@@ -90,6 +90,15 @@ class DotMap(MutableMapping, OrderedDict):
     def __contains__(self, k):
         return self._map.__contains__(k)
 
+    def __add__(self, other):
+        if self.empty():
+            return other
+        else:
+            self_type = type(self).__name__
+            other_type = type(other).__name__
+            msg = "unsupported operand type(s) for +: '{}' and '{}'"
+            raise TypeError(msg.format(self_type, other_type))
+
     def __str__(self):
         items = []
         for k,v in self.__call_items(self._map):
