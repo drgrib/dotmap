@@ -314,6 +314,13 @@ class EmptyAddTestCase(unittest.TestCase):
         m.quote += ', oh my'
         self.assertEqual(m.quote, 'lions and tigers and bears, oh my')
 
+    def test_strange_addition(self):
+        m = DotMap()
+        m += "I'm a string now"
+        self.assertIsInstance(m, str)
+        self.assertNotIsInstance(m, DotMap)
+        self.assertEqual(m, "I'm a string now")
+
     def test_type_error_raised(self):
         m = DotMap()
 
