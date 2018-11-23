@@ -329,6 +329,16 @@ class EmptyAddTestCase(unittest.TestCase):
         self.assertIsInstance(m, str)
         self.assertNotIsInstance(m, DotMap)
         self.assertEqual(m, "I'm a string now")
+        m2 = DotMap() + "I'll replace that DotMap"
+        self.assertEqual(m2, "I'll replace that DotMap")
+
+    def test_protected_hierarchy(self):
+        m = DotMap()
+        m.protected_parent.key = 'value'
+
+        def protectedFromAddition():
+            m.protected_parent += 1
+        self.assertRaises(TypeError, protectedFromAddition)
 
     def test_type_error_raised(self):
         m = DotMap()
