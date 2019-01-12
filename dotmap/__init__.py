@@ -79,10 +79,16 @@ class DotMap(MutableMapping, OrderedDict):
             self[k] = v
 
     def __getattr__(self, k):
-        if k in {'_map','_dynamic','_ipython_canary_method_should_not_exist_'}:
-            super(DotMap, self).__getattr__(k)
-        else:
-            return self[k]
+        if k in {'_map', '_dynamic', '_ipython_canary_method_should_not_exist_'}:
+            return super(DotMap, self).__getattr__(k)
+
+        try:
+            v = super().__getattribute__(k)
+            return v
+        except AttributeError:
+            pass
+
+        return self[k]
 
     def __delattr__(self, key):
         return self._map.__delitem__(key)
@@ -553,11 +559,26 @@ if __name__ == '__main__':
 
     class MyDotMap(DotMap):
         def __getitem__(self, k):
-            print('__getitem__ override')
             return super(MyDotMap, self).__getitem__(k)
     my = MyDotMap()
     my.x.y.z = 3
     print(my)
+
+    # subclass with existing property
+    class PropertyDotMap(MyDotMap):
+        def __init__(self, *args, **kwargs):
+            super(MyDotMap, self).__init__(*args, **kwargs)
+            self._myprop = MyDotMap({'nested': 123})
+
+        @property
+        def first(self):
+            return self._myprop
+
+    p = PropertyDotMap()
+    print(p.first)
+    print(p.first.nested)
+    p.first.second.third = 456
+    print(p.first.second.third)
 
     # final print
     print()
