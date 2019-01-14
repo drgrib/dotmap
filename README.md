@@ -1,5 +1,7 @@
 # DotMap
 
+[![build status](http://img.shields.io/travis/drgrib/dotmap/master.svg?style=flat)](https://travis-ci.org/drgrib/dotmap)
+
 `DotMap` is a dot-access `dict` subclass that
 * has dynamic hierarchy creation
 * can be initialized with keys
