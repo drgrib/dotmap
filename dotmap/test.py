@@ -1,8 +1,8 @@
 import unittest
-from __init__ import DotMap
+from dotmap import DotMap
 
 
-class ReadmeTestCase(unittest.TestCase):
+class TestReadme(unittest.TestCase):
     def test_basic_use(self):
         m = DotMap()
         self.assertIsInstance(m, DotMap)
@@ -61,7 +61,7 @@ class ReadmeTestCase(unittest.TestCase):
             self.assertEqual(expected[i][2], v.job)
 
 
-class BasicTestCase(unittest.TestCase):
+class TestBasic(unittest.TestCase):
     def setUp(self):
         self.d = {
             'a': 1,
@@ -110,24 +110,8 @@ class BasicTestCase(unittest.TestCase):
         m.update({'lol': 1, 'ba': 2})
         self.assertEqual(m.lol, 1)
         self.assertEqual(m.ba, 2)
-        ordered_keys = [
-            'a',
-            'b',
-            'subD',
-            'rat',
-            'bum',
-            'dog',
-            'cat',
-            'lol',
-            'ba',
-        ]
-        for i, k in enumerate(m):
-            self.assertEqual(ordered_keys[i], k)
         self.assertTrue('a' in m)
         self.assertFalse('c' in m)
-        ordered_values = [1, 2, DotMap(c=3, d=4), 5, 4, 7, 9, 1, 2]
-        for i, v in enumerate(m.values()):
-            self.assertEqual(ordered_values[i], v)
         self.assertTrue('c' in m.subD)
         self.assertTrue(len(m.subD), 2)
         del m.subD.c
@@ -149,7 +133,7 @@ class BasicTestCase(unittest.TestCase):
         self.assertEqual(ordered_names, comp)
 
 
-class PickleTestCase(unittest.TestCase):
+class TestPickle(unittest.TestCase):
     def setUp(self):
         self.d = {
             'a': 1,
@@ -170,7 +154,7 @@ class PickleTestCase(unittest.TestCase):
         self.assertEqual(m.subD.d, 4)
 
 
-class EmptyTestCase(unittest.TestCase):
+class TestEmpty(unittest.TestCase):
     def test(self):
         m = DotMap()
         self.assertTrue(m.empty())
@@ -180,7 +164,7 @@ class EmptyTestCase(unittest.TestCase):
         self.assertIsInstance(m.b, DotMap)
 
 
-class DynamicTestCase(unittest.TestCase):
+class TestDynamic(unittest.TestCase):
     def test(self):
         m = DotMap()
         m.still.works
@@ -200,7 +184,7 @@ class DynamicTestCase(unittest.TestCase):
         self.assertRaises(KeyError, assignNonDynamicWithInit)
 
 
-class RecursiveTestCase(unittest.TestCase):
+class TestRecursive(unittest.TestCase):
     def test(self):
         m = DotMap()
         m.a = 5
@@ -221,7 +205,7 @@ class RecursiveTestCase(unittest.TestCase):
         self.assertEqual(str(m2), '''DotMap(a=5, recursive=DotMap(...))''')
 
 
-class kwargTestCase(unittest.TestCase):
+class Testkwarg(unittest.TestCase):
     def test(self):
         a = {'1': 'a', '2': 'b'}
         b = DotMap(a, _dynamic=False)
@@ -231,7 +215,7 @@ class kwargTestCase(unittest.TestCase):
         self.assertEqual(a, capture(**b.toDict()))
 
 
-class DeepCopyTestCase(unittest.TestCase):
+class TestDeepCopy(unittest.TestCase):
     def test(self):
         import copy
         original = DotMap()
@@ -262,14 +246,14 @@ class DeepCopyTestCase(unittest.TestCase):
             self.assertEqual(v, orderedPairs[i][1])
 
 
-class DotMapTupleToDictTestCase(unittest.TestCase):
+class TestDotMapTupleToDict(unittest.TestCase):
     def test(self):
         m = DotMap({'a': 1, 'b': (11, 22, DotMap({'c': 3}))})
         d = m.toDict()
         self.assertEqual(d, {'a': 1, 'b': (11, 22, {'c': 3})})
 
 
-class OrderedDictInitTestCase(unittest.TestCase):
+class TestOrderedDictInit(unittest.TestCase):
     def test(self):
         from collections import OrderedDict
         o = OrderedDict([('a', 1), ('b', 2), ('c', [OrderedDict([('d', 3)])])])
@@ -278,7 +262,7 @@ class OrderedDictInitTestCase(unittest.TestCase):
         self.assertIsInstance(m.c[0], DotMap)
 
 
-class EmptyAddTestCase(unittest.TestCase):
+class TestEmptyAdd(unittest.TestCase):
     def test_base(self):
         m = DotMap()
         for i in range(7):
