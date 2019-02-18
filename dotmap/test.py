@@ -112,9 +112,6 @@ class TestBasic(unittest.TestCase):
         self.assertEqual(m.ba, 2)
         self.assertTrue('a' in m)
         self.assertFalse('c' in m)
-        ordered_values = [1, 2, DotMap(c=3, d=4), 5, 4, 7, 9, 1, 2]
-        for i, v in enumerate(m.values()):
-            self.assertEqual(ordered_values[i], v)
         self.assertTrue('c' in m.subD)
         self.assertTrue(len(m.subD), 2)
         del m.subD.c
