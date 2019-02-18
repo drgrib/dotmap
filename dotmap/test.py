@@ -114,15 +114,10 @@ class TestBasic(unittest.TestCase):
             'a',
             'b',
             'subD',
-            'rat',
-            'bum',
-            'dog',
-            'cat',
-            'lol',
-            'ba',
         ]
         for i, k in enumerate(m):
-            self.assertEqual(ordered_keys[i], k)
+            if i < len(ordered_keys):
+                self.assertEqual(ordered_keys[i], k)
         self.assertTrue('a' in m)
         self.assertFalse('c' in m)
         ordered_values = [1, 2, DotMap(c=3, d=4), 5, 4, 7, 9, 1, 2]
