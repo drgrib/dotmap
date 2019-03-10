@@ -198,7 +198,9 @@ class TestRecursive(unittest.TestCase):
         d['recursive'] = d
         d['recursive']['recursive']['recursive']
         self.assertEqual(id(d['recursive']['recursive']['recursive']), d_id)
-        self.assertEqual(str(d), '''{'a': 5, 'recursive': {...}}''')
+        outStr = str(d)
+        self.assertIn(''''a': 5''', outStr)
+        self.assertIn('''recursive': {...}''', outStr)
         m2 = DotMap(d)
         m2_id = id(m2)
         self.assertEqual(id(m2.recursive.recursive.recursive), m2_id)
@@ -365,7 +367,7 @@ class SubclassTestCase(unittest.TestCase):
     def test_subclass_with_property(self):
         p = PropertyDotMap()
         self.assertIsInstance(p.my_prop, PropertyDotMap)
-        self.assertEquals(p.my_prop.nested_prop, 123)
+        self.assertEqual(p.my_prop.nested_prop, 123)
         p.my_prop.second.third = 456
         self.assertIsInstance(p.my_prop.second, PropertyDotMap)
         self.assertEqual(p.my_prop.second.third, 456)
