@@ -80,10 +80,10 @@ class DotMap(MutableMapping, OrderedDict):
 
     def __getattr__(self, k):
         if k in {'_map','_dynamic','_ipython_canary_method_should_not_exist_'}:
-            return super(DotMap, self).__getattr__(k)
+            return super(self.__class__, self).__getattr__(k)
 
         try:
-            v = super().__getattribute__(k)
+            v = super(self.__class__, self).__getattribute__(k)
             return v
         except AttributeError:
             pass
