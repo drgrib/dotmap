@@ -191,7 +191,9 @@ class TestRecursive(unittest.TestCase):
         m_id = id(m)
         m.recursive = m
         self.assertEqual(id(m.recursive.recursive.recursive), m_id)
-        self.assertEqual(str(m), '''DotMap(a=5, recursive=DotMap(...))''')
+        outStr = str(m)
+        self.assertIn('''a=5''', outStr)
+        self.assertIn('''recursive=DotMap(...)''', outStr)
         d = m.toDict()
         d_id = id(d)
         d['a'] = 5
