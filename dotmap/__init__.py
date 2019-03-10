@@ -30,14 +30,14 @@ class DotMap(MutableMapping, OrderedDict):
                         if id(v) in trackedIDs:
                             v = trackedIDs[id(v)]
                         else:
-                            v = DotMap(v, _dynamic=self._dynamic)
+                            v = self.__class__(v, _dynamic=self._dynamic)
                             trackedIDs[id(v)] = v
                     if type(v) is list:
                         l = []
                         for i in v:
                             n = i
                             if isinstance(i, dict):
-                                n = DotMap(i, _dynamic=self._dynamic)
+                                n = self.__class__(i, _dynamic=self._dynamic)
                             l.append(n)
                         v = l
                     self._map[k] = v
@@ -69,7 +69,7 @@ class DotMap(MutableMapping, OrderedDict):
     def __getitem__(self, k):
         if k not in self._map and self._dynamic and k != '_ipython_canary_method_should_not_exist_':
             # automatically extend to new DotMap
-            self[k] = DotMap()
+            self[k] = self.__class__()
         return self._map[k]
 
     def __setattr__(self, k, v):
@@ -80,9 +80,15 @@ class DotMap(MutableMapping, OrderedDict):
 
     def __getattr__(self, k):
         if k in {'_map','_dynamic','_ipython_canary_method_should_not_exist_'}:
-            super(DotMap, self).__getattr__(k)
-        else:
-            return self[k]
+            return super(DotMap, self).__getattr__(k)
+
+        try:
+            v = super().__getattribute__(k)
+            return v
+        except AttributeError:
+            pass
+
+        return self[k]
 
     def __delattr__(self, key):
         return self._map.__delitem__(key)
@@ -104,7 +110,7 @@ class DotMap(MutableMapping, OrderedDict):
         for k,v in self.__call_items(self._map):
             # recursive assignment case
             if id(v) == id(self):
-                items.append('{0}=DotMap(...)'.format(k))
+                items.append('{0}={1}(...)'.format(k, self.__class__.__name__))
             else:
                 items.append('{0}={1}'.format(k, repr(v)))
         joined = ', '.join(items)
@@ -117,7 +123,7 @@ class DotMap(MutableMapping, OrderedDict):
     def toDict(self):
         d = {}
         for k,v in self.items():
-            if type(v) is DotMap:
+            if issubclass(type(v), DotMap):
                 # bizarre recursive assignment support
                 if id(v) == id(self):
                     v = d
@@ -127,7 +133,7 @@ class DotMap(MutableMapping, OrderedDict):
                 l = []
                 for i in v:
                     n = i
-                    if type(i) is DotMap:
+                    if issubclass(type(i), DotMap):
                         n = i.toDict()
                     l.append(n)
                 if type(v) is tuple:
@@ -156,7 +162,7 @@ class DotMap(MutableMapping, OrderedDict):
 
     @classmethod
     def parseOther(self, other):
-        if type(other) is DotMap:
+        if issubclass(type(other), DotMap):
             return other._map
         else:
             return other
@@ -191,7 +197,7 @@ class DotMap(MutableMapping, OrderedDict):
     def clear(self):
         self._map.clear()
     def copy(self):
-        return DotMap(self)
+        return self.__class__(self)
     def __copy__(self):
         return self.copy()
     def __deepcopy__(self, memo=None):
@@ -224,7 +230,7 @@ class DotMap(MutableMapping, OrderedDict):
         return self._map.viewvalues()
     @classmethod
     def fromkeys(cls, seq, value=None):
-        d = DotMap()
+        d = cls()
         d._map = OrderedDict.fromkeys(seq, value)
         return d
     def __getstate__(self): return self.__dict__
@@ -269,7 +275,7 @@ class DotMap(MutableMapping, OrderedDict):
     def _getSubMapStr(self, name, subMap):
         outList = ['== {} =='.format(name)]
         for k,v in subMap.items():
-            if isinstance(v,DotMap) and v != DotMap():
+            if isinstance(v, self.__class__) and v != self.__class__():
                 # break down to dots
                 subList = self._getSubMapDotList('',k,v)
                 # add the divit
@@ -286,15 +292,15 @@ class DotMap(MutableMapping, OrderedDict):
         lines = []
         previous = None
         for k,v in self.items():
-            if previous == 'DotMap':
+            if previous == self.__class__.__name__:
                 lines.append('-')
             out = ''
-            if isinstance(v,DotMap):
+            if isinstance(v, self.__class__):
                 name = k
                 subMap = v
                 out = self._getSubMapStr(name,subMap)
                 lines.append(out)
-                previous = 'DotMap'
+                previous = self.__class__.__name__
             else:
                 out = self._getValueStr(k,v)
                 lines.append(out)
@@ -547,6 +553,36 @@ if __name__ == '__main__':
     m = DotMap(a=1)
     print({**m})
     '''
+
+    print('\n== DotMap subclass ==')
+
+
+    class MyDotMap(DotMap):
+        def __getitem__(self, k):
+            return super(MyDotMap, self).__getitem__(k)
+
+
+    my = MyDotMap()
+    my.x.y.z = 3
+    print(my)
+
+
+    # subclass with existing property
+    class PropertyDotMap(MyDotMap):
+        def __init__(self, *args, **kwargs):
+            super(MyDotMap, self).__init__(*args, **kwargs)
+            self._myprop = MyDotMap({'nested': 123})
+
+        @property
+        def first(self):
+            return self._myprop
+
+
+    p = PropertyDotMap()
+    print(p.first)
+    print(p.first.nested)
+    p.first.second.third = 456
+    print(p.first.second.third)
 
     # final print
     print()
