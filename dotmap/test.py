@@ -331,3 +331,41 @@ class TestEmptyAdd(unittest.TestCase):
             m.a += 1
             m.a += ' and tigers'
         self.assertRaises(TypeError, badAddition)
+
+
+# Test classes for SubclassTestCase below
+
+# class that overrides __getitem__
+class MyDotMap(DotMap):
+    def __getitem__(self, k):
+        return super(MyDotMap, self).__getitem__(k)
+
+
+# subclass with existing property
+class PropertyDotMap(MyDotMap):
+    def __init__(self, *args, **kwargs):
+        super(MyDotMap, self).__init__(*args, **kwargs)
+        self._myprop = None
+
+    @property
+    def my_prop(self):
+        if not self._myprop:
+            self._myprop = PropertyDotMap({'nested_prop': 123})
+        return self._myprop
+
+
+class SubclassTestCase(unittest.TestCase):
+    def test_nested_subclass(self):
+        my = MyDotMap()
+        my.x.y.z = 123
+        self.assertEqual(my.x.y.z, 123)
+        self.assertIsInstance(my.x, MyDotMap)
+        self.assertIsInstance(my.x.y, MyDotMap)
+
+    def test_subclass_with_property(self):
+        p = PropertyDotMap()
+        self.assertIsInstance(p.my_prop, PropertyDotMap)
+        self.assertEquals(p.my_prop.nested_prop, 123)
+        p.my_prop.second.third = 456
+        self.assertIsInstance(p.my_prop.second, PropertyDotMap)
+        self.assertEqual(p.my_prop.second.third, 456)
