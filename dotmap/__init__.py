@@ -1,5 +1,9 @@
 from __future__ import print_function
-from collections import OrderedDict, MutableMapping
+from collections import OrderedDict
+try:
+    from collections.abc import MutableMapping
+except ImportError:
+    from collections import MutableMapping
 from json import dumps
 from pprint import pprint
 from sys import version_info
