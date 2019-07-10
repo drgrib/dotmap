@@ -206,7 +206,9 @@ class TestRecursive(unittest.TestCase):
         m2 = DotMap(d)
         m2_id = id(m2)
         self.assertEqual(id(m2.recursive.recursive.recursive), m2_id)
-        self.assertEqual(str(m2), '''DotMap(a=5, recursive=DotMap(...))''')
+        outStr2 = str(m2)
+        self.assertIn('''a=5''', outStr2)
+        self.assertIn('''recursive=DotMap(...)''', outStr2)
 
 
 class Testkwarg(unittest.TestCase):
