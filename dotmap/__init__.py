@@ -221,7 +221,7 @@ class DotMap(MutableMapping, OrderedDict):
     def popitem(self):
         return self._map.popitem()
     def setdefault(self, key, default=None):
-        self._map.setdefault(key, default)
+        return self._map.setdefault(key, default)
     def update(self, *args, **kwargs):
         if len(args) != 0:
             self._map.update(*args)
