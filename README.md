@@ -2,6 +2,18 @@
 
 [![Build Status](https://travis-ci.com/drgrib/dotmap.svg?branch=master)](https://travis-ci.com/drgrib/dotmap)
 
+# Install
+```
+pip3 install dotmap
+```
+
+## Upgrade
+Get updates for current installation
+```
+pip3 install --upgrade dotmap
+```
+
+# Features
 `DotMap` is a dot-access `dict` subclass that
 * has dynamic hierarchy creation
 * can be initialized with keys
