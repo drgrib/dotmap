@@ -47,7 +47,7 @@ class DotMap(MutableMapping, OrderedDict):
                     self._map[k] = v
         if kwargs:
             for k,v in self.__call_items(kwargs):
-                if k is not '_dynamic':
+                if k != '_dynamic':
                     self._map[k] = v
 
     def __call_items(self, obj):
