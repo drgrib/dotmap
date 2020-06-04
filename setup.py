@@ -4,7 +4,7 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setup(
-	version = '1.3.14',
+	version = '1.3.15',
     name='dotmap',
     packages=['dotmap'],  # this must be the same as the name above
     description='ordered, dynamically-expandable dot-access dictionary',
