@@ -83,6 +83,9 @@ class DotMap(MutableMapping, OrderedDict):
             self[k] = v
 
     def __getattr__(self, k):
+        if k.startswith('__') and k.endswith('__'):
+            raise AttributeError(k)
+
         if k in {'_map','_dynamic','_ipython_canary_method_should_not_exist_'}:
             return super(DotMap, self).__getattr__(k)
 
