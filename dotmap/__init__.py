@@ -29,8 +29,6 @@ class DotMap(MutableMapping, OrderedDict):
             # for recursive assignment handling
             trackedIDs = {id(d): self}
 
-
-
             src = None
             if isinstance(d, MutableMapping):
                 src = self.__call_items(d)
