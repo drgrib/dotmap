@@ -112,12 +112,17 @@ class DotMap(MutableMapping, OrderedDict):
             msg = "unsupported operand type(s) for +: '{}' and '{}'"
             raise TypeError(msg.format(self_type, other_type))
 
-    def __str__(self):
+    def __str__(self, seen = None):
         items = []
+        seen = set() if seen is None else seen
         for k,v in self.__call_items(self._map):
-            # recursive assignment case
-            if id(v) == id(self):
-                items.append('{0}={1}(...)'.format(k, self.__class__.__name__))
+            # circular assignment case
+            if isinstance(v, self.__class__):
+                if id(v) in seen:
+                    items.append('{0}={1}(...)'.format(k, self.__class__.__name__))
+                else:
+                    seen.add(id(v))
+                    items.append('{0}={1}'.format(k, v.__str__(seen)))
             else:
                 items.append('{0}={1}'.format(k, repr(v)))
         joined = ', '.join(items)
