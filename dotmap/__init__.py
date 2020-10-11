@@ -1,9 +1,9 @@
 from __future__ import print_function
 from collections import OrderedDict
 try:
-    from collections.abc import MutableMapping
+    from collections.abc import MutableMapping, Iterable
 except ImportError:
-    from collections import MutableMapping
+    from collections import MutableMapping, Iterable
 from json import dumps
 from pprint import pprint
 from sys import version_info
@@ -28,8 +28,15 @@ class DotMap(MutableMapping, OrderedDict):
             d = args[0]
             # for recursive assignment handling
             trackedIDs = {id(d): self}
-            if isinstance(d, dict):
-                for k,v in self.__call_items(d):
+
+            src = None
+            if isinstance(d, MutableMapping):
+                src = self.__call_items(d)
+            elif isinstance(d, Iterable):
+                src = d
+
+            if src:
+                for k,v in src:
                     if isinstance(v, dict):
                         if id(v) in trackedIDs:
                             v = trackedIDs[id(v)]
