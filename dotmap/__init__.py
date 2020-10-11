@@ -16,46 +16,48 @@ def here(item=None):
         out += '({})'.format(item)
     print(out)
 
+__all__ = ['DotMap']
 
 class DotMap(MutableMapping, OrderedDict):
     def __init__(self, *args, **kwargs):
         self._map = OrderedDict()
-        self._dynamic = True
-        if kwargs:
-            if '_dynamic' in kwargs:
-                self._dynamic = kwargs['_dynamic']
+        self._dynamic = kwargs.pop('_dynamic', True)
+        self._allow_all_keys = kwargs.pop('_allow_all_keys', False)
+
         if args:
             d = args[0]
             # for recursive assignment handling
             trackedIDs = {id(d): self}
 
-            src = None
+            src = []
             if isinstance(d, MutableMapping):
                 src = self.__call_items(d)
             elif isinstance(d, Iterable):
                 src = d
 
-            if src:
-                for k,v in src:
-                    if isinstance(v, dict):
-                        if id(v) in trackedIDs:
-                            v = trackedIDs[id(v)]
-                        else:
-                            v = self.__class__(v, _dynamic=self._dynamic)
-                            trackedIDs[id(v)] = v
-                    if type(v) is list:
-                        l = []
-                        for i in v:
-                            n = i
-                            if isinstance(i, dict):
-                                n = self.__class__(i, _dynamic=self._dynamic)
-                            l.append(n)
-                        v = l
-                    self._map[k] = v
+            for k,v in src:
+                if not self._allow_all_keys and k in reserved_keys:
+                    raise KeyError('"{}" is reserved'.format(k))
+                if isinstance(v, dict):
+                    if id(v) in trackedIDs:
+                        v = trackedIDs[id(v)]
+                    else:
+                        v = self.__class__(v, _dynamic=self._dynamic)
+                        trackedIDs[id(v)] = v
+                if type(v) is list:
+                    l = []
+                    for i in v:
+                        n = i
+                        if isinstance(i, dict):
+                            n = self.__class__(i, _dynamic=self._dynamic)
+                        l.append(n)
+                    v = l
+                self._map[k] = v
         if kwargs:
             for k,v in self.__call_items(kwargs):
-                if k != '_dynamic':
-                    self._map[k] = v
+                if not self._allow_all_keys and k in reserved_keys:
+                    raise KeyError('"{}" is reserved'.format(k))
+                self._map[k] = v
 
     def __call_items(self, obj):
         if hasattr(obj, 'iteritems') and ismethod(getattr(obj, 'iteritems')):
@@ -84,8 +86,10 @@ class DotMap(MutableMapping, OrderedDict):
         return self._map[k]
 
     def __setattr__(self, k, v):
-        if k in {'_map','_dynamic', '_ipython_canary_method_should_not_exist_'}:
+        if k in {'_map','_dynamic', '_ipython_canary_method_should_not_exist_', '_allow_all_keys'}:
             super(DotMap, self).__setattr__(k,v)
+        elif not self._allow_all_keys and k in reserved_keys:
+            raise KeyError('"{}" is reserved'.format(k))
         else:
             self[k] = v
 
@@ -328,6 +332,7 @@ class DotMap(MutableMapping, OrderedDict):
         s = '\n'.join(lines)
         return s
 
+reserved_keys = {i for i in dir(DotMap) if not i.startswith('__') and not i.endswith('__')}
 
 if __name__ == '__main__':
     # basics
