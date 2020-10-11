@@ -114,11 +114,7 @@ class DotMap(MutableMapping, OrderedDict):
 
     def __str__(self, seen = None):
         items = []
-<<<<<<< HEAD
         seen = {id(self)} if seen is None else seen
-=======
-        seen = set() if seen is None else seen
->>>>>>> upstream/master
         for k,v in self.__call_items(self._map):
             # circular assignment case
             if isinstance(v, self.__class__):
