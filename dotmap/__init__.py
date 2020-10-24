@@ -23,11 +23,12 @@ class DotMap(MutableMapping, OrderedDict):
         self._map = OrderedDict()
         self._dynamic = kwargs.pop('_dynamic', True)
         self._prevent_method_masking = kwargs.pop('_prevent_method_masking', False)
+        trackedIDs = kwargs.pop('_trackedIDs', {})
 
         if args:
             d = args[0]
             # for recursive assignment handling
-            trackedIDs = {id(d): self}
+            trackedIDs[id(d)] = self
 
             src = []
             if isinstance(d, MutableMapping):
@@ -42,8 +43,8 @@ class DotMap(MutableMapping, OrderedDict):
                     if id(v) in trackedIDs:
                         v = trackedIDs[id(v)]
                     else:
-                        v = self.__class__(v, _dynamic=self._dynamic, _prevent_method_masking = self._prevent_method_masking)
                         trackedIDs[id(v)] = v
+                        v = self.__class__(v, _dynamic=self._dynamic, _prevent_method_masking = self._prevent_method_masking, _trackedIDs = trackedIDs)
                 if type(v) is list:
                     l = []
                     for i in v:
