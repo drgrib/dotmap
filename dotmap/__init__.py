@@ -163,9 +163,6 @@ class DotMap(MutableMapping, OrderedDict):
                 idv = id(v)
                 if idv in seen:
                     v = seen[idv]
-                # bizarre recursive assignment support
-                elif idv == id(self):
-                    v = d
                 else:
                     v = v.toDict(seen = seen)
             elif type(v) in (list, tuple):
