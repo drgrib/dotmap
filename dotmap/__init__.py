@@ -144,21 +144,28 @@ class DotMap(MutableMapping, OrderedDict):
     def __repr__(self):
         return str(self)
 
-    def toDict(self):
+    def toDict(self, _seen = None):
         d = {}
+        if _seen is None:
+            _seen = set()
         for k,v in self.items():
+            if id(v) in _seen: continue
+            _seen.add(id(v))
             if issubclass(type(v), DotMap):
                 # bizarre recursive assignment support
                 if id(v) == id(self):
                     v = d
                 else:
-                    v = v.toDict()
+                    v = v.toDict(_seen = _seen)
             elif type(v) in (list, tuple):
                 l = []
                 for i in v:
                     n = i
+                    if id(i) in _seen: continue
+                    _seen.add(id(i))
+
                     if issubclass(type(i), DotMap):
-                        n = i.toDict()
+                        n = i.toDict(_seen)
                     l.append(n)
                 if type(v) is tuple:
                     v = tuple(l)
