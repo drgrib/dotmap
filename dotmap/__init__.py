@@ -23,11 +23,12 @@ class DotMap(MutableMapping, OrderedDict):
         self._map = OrderedDict()
         self._dynamic = kwargs.pop('_dynamic', True)
         self._prevent_method_masking = kwargs.pop('_prevent_method_masking', False)
+        trackedIDs = kwargs.pop('_trackedIDs', {})
 
         if args:
             d = args[0]
             # for recursive assignment handling
-            trackedIDs = {id(d): self}
+            trackedIDs[id(d)] = self
 
             src = []
             if isinstance(d, MutableMapping):
@@ -39,17 +40,23 @@ class DotMap(MutableMapping, OrderedDict):
                 if self._prevent_method_masking and k in reserved_keys:
                     raise KeyError('"{}" is reserved'.format(k))
                 if isinstance(v, dict):
-                    if id(v) in trackedIDs:
-                        v = trackedIDs[id(v)]
+                    idv = id(v)
+                    if idv in trackedIDs:
+                        v = trackedIDs[idv]
                     else:
-                        v = self.__class__(v, _dynamic=self._dynamic, _prevent_method_masking = self._prevent_method_masking)
-                        trackedIDs[id(v)] = v
+                        trackedIDs[idv] = v
+                        v = self.__class__(v, _dynamic=self._dynamic, _prevent_method_masking = self._prevent_method_masking, _trackedIDs = trackedIDs)
                 if type(v) is list:
                     l = []
                     for i in v:
                         n = i
                         if isinstance(i, dict):
-                            n = self.__class__(i, _dynamic=self._dynamic, _prevent_method_masking = self._prevent_method_masking)
+                            idi = id(i)
+                            if idi in trackedIDs:
+                                n = trackedIDs[idi]
+                            else:
+                                trackedIDs[idi] = i
+                                n = self.__class__(i, _dynamic=self._dynamic, _prevent_method_masking = self._prevent_method_masking)
                         l.append(n)
                     v = l
                 self._map[k] = v
@@ -143,21 +150,31 @@ class DotMap(MutableMapping, OrderedDict):
     def __repr__(self):
         return str(self)
 
-    def toDict(self):
+    def toDict(self, seen = None):
+        if seen is None:
+            seen = {}
+
         d = {}
+
+        seen[id(self)] = d
+
         for k,v in self.items():
             if issubclass(type(v), DotMap):
-                # bizarre recursive assignment support
-                if id(v) == id(self):
-                    v = d
+                idv = id(v)
+                if idv in seen:
+                    v = seen[idv]
                 else:
-                    v = v.toDict()
+                    v = v.toDict(seen = seen)
             elif type(v) in (list, tuple):
                 l = []
                 for i in v:
                     n = i
                     if issubclass(type(i), DotMap):
-                        n = i.toDict()
+                        idv = id(n)
+                        if idv in seen:
+                            n = seen[idv]
+                        else:
+                            n = i.toDict(seen = seen)
                     l.append(n)
                 if type(v) is tuple:
                     v = tuple(l)
@@ -646,6 +663,26 @@ if __name__ == '__main__':
         raise RuntimeError("this should fail with KeyError")
     except KeyError:
         print('nested dict attrib masking ok')
+
+    print('\n== DotMap __init__, toDict, and __str__ with circular references ==')
+
+    a = { 'name': 'a'}
+    b = { 'name': 'b'}
+    c = { 'name': 'c', 'list': []}
+
+    # Create circular reference
+    a['b'] = b
+    b['c'] = c
+    c['a'] = a
+    c['list'].append(b)
+
+    print(a)
+    x = DotMap(a)
+    print(x)
+    y = x.toDict()
+    assert id(y['b']['c']['a']) == id(y)
+    assert id(y['b']['c']['list'][0]) == id(y['b'])
+    print(y)
 
     # final print
     print()
