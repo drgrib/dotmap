@@ -2,6 +2,8 @@
 
 [![Build Status](https://travis-ci.com/drgrib/dotmap.svg?branch=master)](https://travis-ci.com/drgrib/dotmap)
 
+[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/donate?business=N2GLXLS5KBFBY&item_name=Chris+Redford&currency_code=USD)
+
 # Install
 ```
 pip3 install dotmap
