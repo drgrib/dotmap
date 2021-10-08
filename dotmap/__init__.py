@@ -113,7 +113,10 @@ class DotMap(MutableMapping, OrderedDict):
         except AttributeError:
             pass
 
-        return self[k]
+        try:
+            return self[k]
+        except KeyError:
+            raise AttributeError
 
     def __delattr__(self, key):
         return self._map.__delitem__(key)

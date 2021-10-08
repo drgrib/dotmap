@@ -171,17 +171,25 @@ class TestDynamic(unittest.TestCase):
         m.sub.still.works
         nonDynamic = DotMap(_dynamic=False)
 
-        def assignNonDynamic():
+        def assignNonDynamicAttribut():
             nonDynamic.no
-        self.assertRaises(KeyError, assignNonDynamic)
+        self.assertRaises(AttributeError, assignNonDynamicAttribut)
+
+        def assignNonDynamicKey():
+            nonDynamic['no']
+        self.assertRaises(KeyError, assignNonDynamicKey)
 
         nonDynamicWithInit = DotMap(m, _dynamic=False)
         nonDynamicWithInit.still.works
         nonDynamicWithInit.sub.still.works
 
-        def assignNonDynamicWithInit():
+        def assignNonDynamicAttributWithInit():
             nonDynamicWithInit.no.creation
-        self.assertRaises(KeyError, assignNonDynamicWithInit)
+        self.assertRaises(AttributeError, assignNonDynamicAttributWithInit)
+
+        def assignNonDynamicKeyWithInit():
+            nonDynamicWithInit['no'].creation
+        self.assertRaises(KeyError, assignNonDynamicKeyWithInit)
 
 
 class TestRecursive(unittest.TestCase):
