@@ -116,7 +116,7 @@ class DotMap(MutableMapping, OrderedDict):
         try:
             return self[k]
         except KeyError:
-            raise AttributeError
+            raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{k}'") from None
 
     def __delattr__(self, key):
         return self._map.__delitem__(key)
