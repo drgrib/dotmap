@@ -171,9 +171,9 @@ class TestDynamic(unittest.TestCase):
         m.sub.still.works
         nonDynamic = DotMap(_dynamic=False)
 
-        def assignNonDynamicAttribut():
+        def assignNonDynamicAttribute():
             nonDynamic.no
-        self.assertRaises(AttributeError, assignNonDynamicAttribut)
+        self.assertRaises(AttributeError, assignNonDynamicAttribute)
 
         def assignNonDynamicKey():
             nonDynamic['no']
@@ -183,9 +183,9 @@ class TestDynamic(unittest.TestCase):
         nonDynamicWithInit.still.works
         nonDynamicWithInit.sub.still.works
 
-        def assignNonDynamicAttributWithInit():
+        def assignNonDynamicAttributeWithInit():
             nonDynamicWithInit.no.creation
-        self.assertRaises(AttributeError, assignNonDynamicAttributWithInit)
+        self.assertRaises(AttributeError, assignNonDynamicAttributeWithInit)
 
         def assignNonDynamicKeyWithInit():
             nonDynamicWithInit['no'].creation
