@@ -113,7 +113,10 @@ class DotMap(MutableMapping, OrderedDict):
         except AttributeError:
             pass
 
-        return self[k]
+        try:
+            return self[k]
+        except KeyError:
+            raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{k}'") from None
 
     def __delattr__(self, key):
         return self._map.__delitem__(key)
@@ -435,8 +438,8 @@ if __name__ == '__main__':
     try:
         d.no.creation
         print(d)
-    except KeyError:
-        print('KeyError caught')
+    except AttributeError:
+        print('AttributeError caught')
     d = {'sub':{'a':1}}
     dm = DotMap(d)
     print(dm)
@@ -449,8 +452,8 @@ if __name__ == '__main__':
         print(dm)
         dm2.sub.no.creation
         print(dm)
-    except KeyError:
-        print('KeyError caught')
+    except AttributeError:
+        print('AttributeError caught')
 
     # _dynamic
     print('\n== toDict() ==')
