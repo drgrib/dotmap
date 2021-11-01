@@ -22,7 +22,7 @@ pip3 install --upgrade dotmap
 
 `DotMap` is a dot-access `dict` subclass that
 
--   has dynamic hierarchy create (autovivification)
+-   has dynamic hierarchy creation (autovivification)
 -   can be initialized with keys
 -   easily initializes from `dict`
 -   easily converts to `dict`
