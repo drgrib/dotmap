@@ -5,27 +5,32 @@
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/donate?business=N2GLXLS5KBFBY&item_name=Chris+Redford&currency_code=USD)
 
 # Install
+
 ```
 pip3 install dotmap
 ```
 
 ## Upgrade
+
 Get updates for current installation
+
 ```
 pip3 install --upgrade dotmap
 ```
 
 # Features
+
 `DotMap` is a dot-access `dict` subclass that
-* has dynamic hierarchy creation
-* can be initialized with keys
-* easily initializes from `dict`
-* easily converts to `dict`
-* is ordered by insertion
+
+-   has dynamic hierarchy create (autovivification)
+-   can be initialized with keys
+-   easily initializes from `dict`
+-   easily converts to `dict`
+-   is ordered by insertion
 
 The key feature is exactly what you want: dot-access
 
-``` python
+```python
 from dotmap import DotMap
 m = DotMap()
 m.name = 'Joe'
@@ -35,7 +40,7 @@ print('Hello ' + m.name)
 
 However, `DotMap` is a `dict` and you can treat it like a `dict` as needed
 
-``` python
+```python
 print(m['name'])
 # Joe
 m.name += ' Smith'
@@ -46,20 +51,20 @@ print(m.name)
 
 It also has fast, automatic hierarchy (which can be deactivated by initializing with `DotMap(_dynamic=False)`)
 
-``` python
+```python
 m = DotMap()
 m.people.steve.age = 31
 ```
 
 And key initialization
 
-``` python
+```python
 m = DotMap(a=1, b=2)
 ```
 
 You can initialize it from `dict` and convert it to `dict`
 
-``` python
+```python
 d = {'a':1, 'b':2}
 
 m = DotMap(d)
@@ -72,7 +77,7 @@ print(m.toDict())
 
 And it has iteration that is ordered by insertion
 
-``` python
+```python
 m = DotMap()
 
 m.people.john.age = 32
@@ -93,7 +98,7 @@ print
 
 It also has automatic counter initialization
 
-``` python
+```python
 m = DotMap()
 for i in range(7):
 	m.counter += 1
@@ -103,7 +108,7 @@ print(m.counter)
 
 And automatic addition initializations of any other type
 
-``` python
+```python
 m = DotMap()
 m.quote += 'lions'
 m.quote += ' and tigers'
@@ -115,7 +120,7 @@ print(m.quote)
 
 There is also built-in `pprint` as `dict` or `json` for debugging a large `DotMap`
 
-``` python
+```python
 m.pprint()
 # {'people': {'dave': {'age': 55, 'job': 'manager'},
 #             'john': {'age': 32, 'job': 'programmer'},
