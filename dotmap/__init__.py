@@ -23,6 +23,8 @@ class DotMap(MutableMapping, OrderedDict):
         self._map = OrderedDict()
         self._dynamic = kwargs.pop('_dynamic', True)
         self._prevent_method_masking = kwargs.pop('_prevent_method_masking', False)
+        
+        _key_convert_hook = kwargs.pop('_key_convert_hook', None)
         trackedIDs = kwargs.pop('_trackedIDs', {})
 
         if args:
@@ -39,6 +41,8 @@ class DotMap(MutableMapping, OrderedDict):
             for k,v in src:
                 if self._prevent_method_masking and k in reserved_keys:
                     raise KeyError('"{}" is reserved'.format(k))
+                if _key_convert_hook:
+                    k = _key_convert_hook(k)
                 if isinstance(v, dict):
                     idv = id(v)
                     if idv in trackedIDs:
@@ -666,7 +670,7 @@ if __name__ == '__main__':
         raise RuntimeError("this should fail with KeyError")
     except KeyError:
         print('nested dict attrib masking ok')
-
+    
     print('\n== DotMap __init__, toDict, and __str__ with circular references ==')
 
     a = { 'name': 'a'}
