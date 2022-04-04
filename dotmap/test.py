@@ -383,3 +383,21 @@ class SubclassTestCase(unittest.TestCase):
         p.my_prop.second.third = 456
         self.assertIsInstance(p.my_prop.second, PropertyDotMap)
         self.assertEqual(p.my_prop.second.third, 456)
+
+class TestKeyConvertHook(unittest.TestCase):
+    def fix_illegal_key(self, key):
+        return key.replace(".", "_").replace("-","_")
+    
+    def test(self):
+        # default key_convert_hook = None
+        d = DotMap({"dot.map":123}, _dynamic=False)
+        self.assertRaises(AttributeError, lambda: d.dot.map)
+        
+        d = DotMap({ "dot@map":"dot_map"}, _key_convert_hook = lambda k: k.replace('@','_'))
+        self.assertEqual(d.dot_map, "dot_map")
+
+        d = DotMap({"dot-map":123}, _key_convert_hook = self.fix_illegal_key)
+        self.assertEqual(d.dot_map, 123)
+        
+        d = DotMap({"dot!map":456}, _key_convert_hook = lambda k: 'DOTMAP' if k == 'dot!map' else k)
+        self.assertEqual(d.DOTMAP, 456)
