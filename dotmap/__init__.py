@@ -39,7 +39,6 @@ class DotMap(MutableMapping, OrderedDict):
             for k,v in src:
                 if self._prevent_method_masking and k in reserved_keys:
                     raise KeyError('"{}" is reserved'.format(k))
-                k = self.__fix_illegal_name__(k)
                 if isinstance(v, dict):
                     idv = id(v)
                     if idv in trackedIDs:
@@ -84,9 +83,6 @@ class DotMap(MutableMapping, OrderedDict):
 
     def next(self):
         return self._map.next()
-    
-    def __fix_illegal_name__(self, str: str):
-        return str.replace(".", "_").replace("-","_")
 
     def __setitem__(self, k, v):
         self._map[k] = v
