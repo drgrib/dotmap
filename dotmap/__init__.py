@@ -49,7 +49,7 @@ class DotMap(MutableMapping, OrderedDict):
                         v = trackedIDs[idv]
                     else:
                         trackedIDs[idv] = v
-                        v = self.__class__(v, _dynamic=self._dynamic, _prevent_method_masking = self._prevent_method_masking, _trackedIDs = trackedIDs)
+                        v = self.__class__(v, _dynamic=self._dynamic, _prevent_method_masking = self._prevent_method_masking, _key_convert_hook =_key_convert_hook, _trackedIDs = trackedIDs)
                 if type(v) is list:
                     l = []
                     for i in v:
@@ -60,7 +60,7 @@ class DotMap(MutableMapping, OrderedDict):
                                 n = trackedIDs[idi]
                             else:
                                 trackedIDs[idi] = i
-                                n = self.__class__(i, _dynamic=self._dynamic, _prevent_method_masking = self._prevent_method_masking)
+                                n = self.__class__(i, _dynamic=self._dynamic, _key_convert_hook =_key_convert_hook, _prevent_method_masking = self._prevent_method_masking)
                         l.append(n)
                     v = l
                 self._map[k] = v
@@ -68,6 +68,8 @@ class DotMap(MutableMapping, OrderedDict):
             for k,v in self.__call_items(kwargs):
                 if self._prevent_method_masking and k in reserved_keys:
                     raise KeyError('"{}" is reserved'.format(k))
+                if _key_convert_hook:
+                    k = _key_convert_hook(k)
                 self._map[k] = v
 
     def __call_items(self, obj):
