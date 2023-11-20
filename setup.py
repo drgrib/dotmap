@@ -14,6 +14,7 @@ setup(
     download_url='https://github.com/drgrib/dotmap/tarball/1.0',
     keywords=['dict', 'dot', 'map', 'order', 'ordered',
               'ordereddict', 'access', 'dynamic'],  # arbitrary keywords
+    python_requires=">= 3.6",
     classifiers=[],
     long_description=long_description,
     long_description_content_type="text/markdown",
