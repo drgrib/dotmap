@@ -1,0 +1,33 @@
+name: run
+
+on: [push]
+
+jobs:
+  tests:
+    # "ubuntu-latest" does not have Python 3.6
+    runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        python-version:
+            - 3.6
+            - 3.7
+            - 3.8
+            - 3.9
+            - "3.10"
+            - "3.11"
+            - "3.12"
+            - "pypy-3.7"
+            - "pypy-3.8"
+            - "pypy-3.9"
+            - "pypy-3.10"
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+      - run: |
+          python3 -m unittest
+
