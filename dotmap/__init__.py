@@ -15,10 +15,15 @@ def here(item=None):
 
 __all__ = ['DotMap']
 
+_default_sentinel = object()
+
 class DotMap(MutableMapping, OrderedDict):
     def __init__(self, *args, **kwargs):
         self._map = OrderedDict()
         self._dynamic = kwargs.pop('_dynamic', True)
+        default = kwargs.pop('_default', _default_sentinel)
+        self._default = None if default is _default_sentinel else default
+        self._default_provided = default is not _default_sentinel
         self._prevent_method_masking = kwargs.pop('_prevent_method_masking', False)
         
         _key_convert_hook = kwargs.pop('_key_convert_hook', None)
@@ -46,7 +51,15 @@ class DotMap(MutableMapping, OrderedDict):
                         v = trackedIDs[idv]
                     else:
                         trackedIDs[idv] = v
-                        v = self.__class__(v, _dynamic=self._dynamic, _prevent_method_masking = self._prevent_method_masking, _key_convert_hook =_key_convert_hook, _trackedIDs = trackedIDs)
+                        child_kwargs = {
+                            '_dynamic': self._dynamic,
+                            '_prevent_method_masking': self._prevent_method_masking,
+                            '_key_convert_hook': _key_convert_hook,
+                            '_trackedIDs': trackedIDs
+                        }
+                        if self._default_provided:
+                            child_kwargs['_default'] = self._default
+                        v = self.__class__(v, **child_kwargs)
                 if type(v) is list:
                     l = []
                     for i in v:
@@ -57,7 +70,14 @@ class DotMap(MutableMapping, OrderedDict):
                                 n = trackedIDs[idi]
                             else:
                                 trackedIDs[idi] = i
-                                n = self.__class__(i, _dynamic=self._dynamic, _key_convert_hook =_key_convert_hook, _prevent_method_masking = self._prevent_method_masking)
+                                child_kwargs = {
+                                    '_dynamic': self._dynamic,
+                                    '_key_convert_hook': _key_convert_hook,
+                                    '_prevent_method_masking': self._prevent_method_masking
+                                }
+                                if self._default_provided:
+                                    child_kwargs['_default'] = self._default
+                                n = self.__class__(i, **child_kwargs)
                         l.append(n)
                     v = l
                 self._map[k] = v
@@ -90,13 +110,19 @@ class DotMap(MutableMapping, OrderedDict):
     def __setitem__(self, k, v):
         self._map[k] = v
     def __getitem__(self, k):
+        if k not in self._map and self._default_provided:
+            return self._default
         if k not in self._map and self._dynamic and k != '_ipython_canary_method_should_not_exist_':
             # automatically extend to new DotMap
             self[k] = self.__class__()
         return self._map[k]
 
     def __setattr__(self, k, v):
-        if k in {'_map','_dynamic', '_ipython_canary_method_should_not_exist_', '_prevent_method_masking'}:
+        if k in {
+            '_map', '_dynamic', '_default', '_default_provided',
+            '_ipython_canary_method_should_not_exist_',
+            '_prevent_method_masking'
+        }:
             super(DotMap, self).__setattr__(k,v)
         elif self._prevent_method_masking and k in reserved_keys:
             raise KeyError('"{}" is reserved'.format(k))
@@ -107,7 +133,10 @@ class DotMap(MutableMapping, OrderedDict):
         if k.startswith('__') and k.endswith('__'):
             raise AttributeError(k)
 
-        if k in {'_map','_dynamic','_ipython_canary_method_should_not_exist_'}:
+        if k in {
+            '_map', '_dynamic', '_default', '_default_provided',
+            '_ipython_canary_method_should_not_exist_'
+        }:
             return super(DotMap, self).__getattr__(k)
 
         try:
@@ -280,7 +309,12 @@ class DotMap(MutableMapping, OrderedDict):
         d._map = OrderedDict.fromkeys(seq, value)
         return d
     def __getstate__(self): return self.__dict__
-    def __setstate__(self, d): self.__dict__.update(d)
+    def __setstate__(self, d):
+        self.__dict__.update(d)
+        if '_default' not in self.__dict__:
+            self._default = None
+        if '_default_provided' not in self.__dict__:
+            self._default_provided = False
     # bannerStr
     def _getListStr(self,items):
         out = '['

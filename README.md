@@ -54,6 +54,14 @@ m = DotMap()
 m.people.steve.age = 31
 ```
 
+You can provide a default value for missing attributes when you do not want automatic hierarchy creation for absent keys
+
+```python
+m = DotMap({'city': 'abc', 'CountryCode': 101}, _default='')
+print(m.zipCode)
+# ''
+```
+
 And key initialization
 
 ```python

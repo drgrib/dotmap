@@ -192,6 +192,23 @@ class TestDynamic(unittest.TestCase):
         self.assertRaises(KeyError, assignNonDynamicKeyWithInit)
 
 
+class TestDefault(unittest.TestCase):
+    def test_missing_attribute_returns_default(self):
+        address = {'city': 'abc', 'country': 'XY', 'CountryCode': 101}
+        m = DotMap(address, _default='')
+
+        self.assertEqual(m.city, 'abc')
+        self.assertEqual(m.CountryCode, 101)
+        self.assertEqual(m.zipCode, '')
+        self.assertNotIn('zipCode', m)
+
+    def test_nested_maps_inherit_default(self):
+        m = DotMap({'address': {'city': 'abc'}}, _default='')
+
+        self.assertEqual(m.address.city, 'abc')
+        self.assertEqual(m.address.zipCode, '')
+
+
 class TestRecursive(unittest.TestCase):
     def test(self):
         m = DotMap()
