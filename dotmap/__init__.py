@@ -355,6 +355,18 @@ class DotMap(MutableMapping, OrderedDict):
         s = '\n'.join(lines)
         return s
 
+
+
+class StaticDotMap(DotMap):
+    def __init__(self, *args, **kwargs):
+        # DotMap uses multiple inheritance so we can not just pass the parameter
+        # to `super(...).__init__()`
+        if kwargs.get('_dynamic', False):
+            raise ValueError('StaticDotMap does not support _dynamic=True')
+        kwargs['_dynamic'] = False
+        super().__init__(*args, **kwargs)
+
+
 reserved_keys = {i for i in dir(DotMap) if not i.startswith('__') and not i.endswith('__')}
 
 if __name__ == '__main__':
