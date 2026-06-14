@@ -1,6 +1,9 @@
-import unittest
 import copy
-from dotmap import DotMap
+import pickle
+import unittest
+from collections import OrderedDict
+
+from dotmap import DotMap, StaticDotMap
 
 
 class TestReadme(unittest.TestCase):
@@ -143,7 +146,6 @@ class TestPickle(unittest.TestCase):
         }
 
     def test(self):
-        import pickle
         pm = DotMap(self.d)
         s = pickle.dumps(pm)
         m = pickle.loads(s)
@@ -191,6 +193,12 @@ class TestDynamic(unittest.TestCase):
         def assignNonDynamicKeyWithInit():
             nonDynamicWithInit['no'].creation
         self.assertRaises(KeyError, assignNonDynamicKeyWithInit)
+
+    def test_none_means_non_dynamic(self):
+        m = DotMap({'a': 1}, _dynamic=None)
+        self.assertEqual(m.a, 1)
+        with self.assertRaises(AttributeError):
+            m.missing
 
 
 class TestDefault(unittest.TestCase):
@@ -296,7 +304,6 @@ class Testkwarg(unittest.TestCase):
 
 class TestDeepCopy(unittest.TestCase):
     def test(self):
-        import copy
         original = DotMap()
         original.a = 1
         original.b = 3
@@ -311,7 +318,6 @@ class TestDeepCopy(unittest.TestCase):
         self.assertNotEqual(original, deepCopy)
 
     def test_order_preserved(self):
-        import copy
         original = DotMap()
         original.a = 1
         original.b = 2
@@ -334,7 +340,6 @@ class TestDotMapTupleToDict(unittest.TestCase):
 
 class TestOrderedDictInit(unittest.TestCase):
     def test(self):
-        from collections import OrderedDict
         o = OrderedDict([('a', 1), ('b', 2), ('c', [OrderedDict([('d', 3)])])])
         m = DotMap(o)
         self.assertIsInstance(m, DotMap)
@@ -412,6 +417,13 @@ class TestEmptyAdd(unittest.TestCase):
         self.assertRaises(TypeError, badAddition)
 
 
+class TestMethodMasking(unittest.TestCase):
+    def test_dynamic_key_is_not_reserved(self):
+        m = DotMap({'a': 1, '_dynamic': 2}, _prevent_method_masking=True)
+        self.assertEqual(m.a, 1)
+        self.assertEqual(m['_dynamic'], 2)
+
+
 # Test classes for SubclassTestCase below
 
 # class that overrides __getitem__
@@ -448,6 +460,162 @@ class SubclassTestCase(unittest.TestCase):
         p.my_prop.second.third = 456
         self.assertIsInstance(p.my_prop.second, PropertyDotMap)
         self.assertEqual(p.my_prop.second.third, 456)
+
+
+class TestStaticDotMap(unittest.TestCase):
+    def test_is_dotmap_subclass(self):
+        m = StaticDotMap()
+        self.assertIsInstance(m, StaticDotMap)
+        self.assertIsInstance(m, DotMap)
+
+    def test_empty_init(self):
+        m = StaticDotMap()
+        self.assertEqual(len(m), 0)
+        self.assertTrue(m.empty())
+        with self.assertRaises(AttributeError):
+            m.missing
+
+    def test_kwargs_init(self):
+        m = StaticDotMap(a=1, b=2)
+        self.assertEqual(m.a, 1)
+        self.assertEqual(m.b, 2)
+        with self.assertRaises(AttributeError):
+            m.missing
+
+    def test_dict_init(self):
+        d = {'a': 1, 'b': 2, 'sub': {'c': 3, 'd': 4}}
+        m = StaticDotMap(d)
+        self.assertEqual(m.a, 1)
+        self.assertEqual(m.b, 2)
+        self.assertEqual(m.sub.c, 3)
+        self.assertEqual(m.sub.d, 4)
+
+    def test_missing_attribute_raises(self):
+        m = StaticDotMap(a=1)
+        with self.assertRaises(AttributeError):
+            m.missing
+
+    def test_missing_item_raises(self):
+        m = StaticDotMap(a=1)
+        with self.assertRaises(KeyError):
+            m['missing']
+
+    def test_nested_missing_attribute_raises(self):
+        m = StaticDotMap({'sub': {'a': 1}})
+        with self.assertRaises(AttributeError):
+            m.sub.missing
+
+    def test_dynamic_true_kwarg_raises(self):
+        # StaticDotMap accepts an explicit false value but not dynamic mode.
+        with self.assertRaisesRegex(ValueError, '^can not set `_dynamic=True` for StaticDotMap$'):
+            StaticDotMap({'a': 1}, _dynamic=True)
+        m = StaticDotMap({'a': 1}, _dynamic=False)
+        self.assertFalse(m._dynamic)
+
+    def test_nested_dicts_become_static(self):
+        m = StaticDotMap({'a': 1, 'sub': {'b': 2, 'deep': {'c': 3}}})
+        self.assertIsInstance(m.sub, StaticDotMap)
+        self.assertIsInstance(m.sub.deep, StaticDotMap)
+        with self.assertRaises(AttributeError):
+            m.sub.missing
+        with self.assertRaises(AttributeError):
+            m.sub.deep.missing
+
+    def test_list_of_dicts_become_static(self):
+        m = StaticDotMap({
+            'children': [{'name': 'a'}, {'name': 'b'}],
+        })
+        self.assertEqual(len(m.children), 2)
+        for child in m.children:
+            self.assertIsInstance(child, StaticDotMap)
+            with self.assertRaises(AttributeError):
+                child.missing
+
+    def test_assignment_to_existing_or_new_key_works(self):
+        # Static only disables auto-creation on read; assignment is still allowed.
+        m = StaticDotMap({'a': 1})
+        m.a = 10
+        self.assertEqual(m.a, 10)
+        m.b = 2
+        self.assertEqual(m.b, 2)
+        m['c'] = 3
+        self.assertEqual(m['c'], 3)
+
+    def test_dict_protocol(self):
+        m = StaticDotMap({'a': 1, 'b': 2})
+        self.assertEqual(set(m.keys()), {'a', 'b'})
+        self.assertEqual(set(m.values()), {1, 2})
+        self.assertEqual(dict(m.items()), {'a': 1, 'b': 2})
+        self.assertEqual(len(m), 2)
+        self.assertIn('a', m)
+        self.assertNotIn('missing', m)
+        self.assertEqual(m.get('a'), 1)
+        self.assertEqual(m.get('missing', 'default'), 'default')
+
+    def test_toDict_returns_plain_dict(self):
+        m = StaticDotMap({'a': 1, 'sub': {'b': 2}})
+        d = m.toDict()
+        self.assertIsInstance(d, dict)
+        self.assertNotIsInstance(d, DotMap)
+        self.assertIsInstance(d['sub'], dict)
+        self.assertNotIsInstance(d['sub'], DotMap)
+        self.assertEqual(d, {'a': 1, 'sub': {'b': 2}})
+
+    def test_copy_preserves_type_and_static(self):
+        m = StaticDotMap({'a': 1, 'sub': {'b': 2}})
+        c = m.copy()
+        self.assertIsInstance(c, StaticDotMap)
+        self.assertIsInstance(c.sub, StaticDotMap)
+        self.assertEqual(c.a, 1)
+        self.assertEqual(c.sub.b, 2)
+        with self.assertRaises(AttributeError):
+            c.missing
+        with self.assertRaises(AttributeError):
+            c.sub.missing
+
+    def test_deepcopy_preserves_type_and_static(self):
+        m = StaticDotMap({'a': 1, 'sub': {'b': 2}})
+        c = copy.deepcopy(m)
+        self.assertIsInstance(c, StaticDotMap)
+        self.assertIsInstance(c.sub, StaticDotMap)
+        with self.assertRaises(AttributeError):
+            c.missing
+        with self.assertRaises(AttributeError):
+            c.sub.missing
+
+    def test_pickle_preserves_type_and_static(self):
+        m = StaticDotMap({'a': 1, 'sub': {'b': 2}})
+        restored = pickle.loads(pickle.dumps(m))
+        self.assertIsInstance(restored, StaticDotMap)
+        self.assertIsInstance(restored.sub, StaticDotMap)
+        self.assertEqual(restored.a, 1)
+        self.assertEqual(restored.sub.b, 2)
+        with self.assertRaises(AttributeError):
+            restored.missing
+        with self.assertRaises(AttributeError):
+            restored.sub.missing
+
+    def test_init_from_dotmap(self):
+        source = DotMap({'a': 1, 'sub': {'b': 2}})
+        m = StaticDotMap(source)
+        self.assertEqual(m.a, 1)
+        self.assertEqual(m.sub.b, 2)
+        with self.assertRaises(AttributeError):
+            m.missing
+
+    def test_equality_with_dict_and_dotmap(self):
+        m = StaticDotMap({'a': 1, 'b': 2})
+        self.assertEqual(m, {'a': 1, 'b': 2})
+        self.assertEqual(m, DotMap({'a': 1, 'b': 2}))
+        self.assertEqual(m, StaticDotMap({'a': 1, 'b': 2}))
+
+    def test_prevent_method_masking_still_works(self):
+        # The flag introduced for DotMap should pass through to StaticDotMap.
+        with self.assertRaises(KeyError):
+            StaticDotMap(a=1, get='mango', _prevent_method_masking=True)
+        with self.assertRaises(KeyError):
+            StaticDotMap({'a': 1, 'get': 'mango'}, _prevent_method_masking=True)
+
 
 class TestKeyConvertHook(unittest.TestCase):
     def fix_illegal_key(self, key):
