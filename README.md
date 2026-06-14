@@ -47,7 +47,7 @@ print(m.name)
 # Joe Smith Jr
 ```
 
-It also has fast, automatic hierarchy (which can be deactivated by initializing with `DotMap(_dynamic=False)`)
+It also has fast, automatic hierarchy (which can be deactivated by initializing with `DotMap(_dynamic=False)` or by using `StaticDotMap`)
 
 ```python
 m = DotMap()

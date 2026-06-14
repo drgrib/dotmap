@@ -13,12 +13,15 @@ def here(item=None):
         out += '({})'.format(item)
     print(out)
 
-__all__ = ['DotMap']
+__all__ = ['DotMap', 'StaticDotMap']
 
 class DotMap(MutableMapping, OrderedDict):
     def __init__(self, *args, **kwargs):
         self._map = OrderedDict()
-        self._dynamic = kwargs.pop('_dynamic', True)
+        default_dynamic = getattr(type(self), '_dynamic', True)
+        self._dynamic = kwargs.pop('_dynamic', default_dynamic)
+        if default_dynamic is False and self._dynamic:
+            raise ValueError(f'can not set `_dynamic={self._dynamic!r}` for {self.__class__.__name__}')
         self._default_factory = kwargs.pop('_default_factory', None)
         if self._default_factory is not None and not callable(self._default_factory):
             raise TypeError('_default_factory must be callable')
@@ -40,6 +43,14 @@ class DotMap(MutableMapping, OrderedDict):
             elif isinstance(d, Iterable):
                 src = d
 
+            child_kwargs = {
+                '_dynamic': self._dynamic,
+                '_default_factory': self._default_factory,
+                '_prevent_method_masking': self._prevent_method_masking,
+                '_key_convert_hook': _key_convert_hook,
+                '_trackedIDs': trackedIDs
+            }
+
             for k,v in src:
                 if self._prevent_method_masking and k in reserved_keys:
                     raise KeyError('"{}" is reserved'.format(k))
@@ -51,13 +62,6 @@ class DotMap(MutableMapping, OrderedDict):
                         v = trackedIDs[idv]
                     else:
                         trackedIDs[idv] = v
-                        child_kwargs = {
-                            '_dynamic': self._dynamic,
-                            '_default_factory': self._default_factory,
-                            '_prevent_method_masking': self._prevent_method_masking,
-                            '_key_convert_hook': _key_convert_hook,
-                            '_trackedIDs': trackedIDs
-                        }
                         v = self.__class__(v, **child_kwargs)
                 if type(v) is list:
                     l = []
@@ -69,12 +73,6 @@ class DotMap(MutableMapping, OrderedDict):
                                 n = trackedIDs[idi]
                             else:
                                 trackedIDs[idi] = i
-                                child_kwargs = {
-                                    '_dynamic': self._dynamic,
-                                    '_default_factory': self._default_factory,
-                                    '_key_convert_hook': _key_convert_hook,
-                                    '_prevent_method_masking': self._prevent_method_masking
-                                }
                                 n = self.__class__(i, **child_kwargs)
                         l.append(n)
                     v = l
@@ -386,6 +384,12 @@ class DotMap(MutableMapping, OrderedDict):
         lines.append('--')
         s = '\n'.join(lines)
         return s
+
+
+
+class StaticDotMap(DotMap):
+    _dynamic = False
+
 
 reserved_keys = {i for i in dir(DotMap) if not i.startswith('__') and not i.endswith('__')}
 
