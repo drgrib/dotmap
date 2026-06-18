@@ -24,6 +24,8 @@ class DotMap(MutableMapping, OrderedDict):
         default = kwargs.pop('_default', _default_sentinel)
         self._default = None if default is _default_sentinel else default
         self._default_provided = default is not _default_sentinel
+        if self._default_provided and not self._dynamic:
+            raise ValueError('cannot provide _default when _dynamic is False')
         self._prevent_method_masking = kwargs.pop('_prevent_method_masking', False)
         
         _key_convert_hook = kwargs.pop('_key_convert_hook', None)
@@ -110,11 +112,12 @@ class DotMap(MutableMapping, OrderedDict):
     def __setitem__(self, k, v):
         self._map[k] = v
     def __getitem__(self, k):
-        if k not in self._map and self._default_provided:
-            return self._default
-        if k not in self._map and self._dynamic and k != '_ipython_canary_method_should_not_exist_':
-            # automatically extend to new DotMap
-            self[k] = self.__class__()
+        if k not in self._map:
+            if self._default_provided:
+                return self._default
+            if self._dynamic and k != '_ipython_canary_method_should_not_exist_':
+                # automatically extend to new DotMap
+                self[k] = self.__class__()
         return self._map[k]
 
     def __setattr__(self, k, v):
@@ -272,7 +275,10 @@ class DotMap(MutableMapping, OrderedDict):
     def clear(self):
         self._map.clear()
     def copy(self):
-        return self.__class__(self)
+        kwargs = {}
+        if self._default_provided:
+            kwargs['_default'] = self._default
+        return self.__class__(self, **kwargs)
     def __copy__(self):
         return self.copy()
     def __deepcopy__(self, memo=None):

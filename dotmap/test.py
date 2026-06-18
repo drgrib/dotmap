@@ -199,14 +199,35 @@ class TestDefault(unittest.TestCase):
 
         self.assertEqual(m.city, 'abc')
         self.assertEqual(m.CountryCode, 101)
-        self.assertEqual(m.zipCode, '')
         self.assertNotIn('zipCode', m)
+        self.assertEqual(m.zipCode, '')
 
     def test_nested_maps_inherit_default(self):
         m = DotMap({'address': {'city': 'abc'}}, _default='')
 
         self.assertEqual(m.address.city, 'abc')
         self.assertEqual(m.address.zipCode, '')
+
+    def test_default_with_dynamic_false_raises(self):
+        self.assertRaises(ValueError, lambda: DotMap(_default='', _dynamic=False))
+
+    def test_copy_preserves_default(self):
+        m = DotMap({'city': 'abc'}, _default='')
+        c = m.copy()
+
+        self.assertEqual(c.city, 'abc')
+        self.assertNotIn('zipCode', c)
+        self.assertEqual(c.zipCode, '')
+
+    def test_deepcopy_preserves_default(self):
+        import copy
+        m = DotMap({'address': {'city': 'abc'}}, _default='')
+        c = copy.deepcopy(m)
+
+        self.assertEqual(c.address.city, 'abc')
+        self.assertNotIn('zipCode', c)
+        self.assertEqual(c.zipCode, '')
+        self.assertEqual(c.address.zipCode, '')
 
 
 class TestRecursive(unittest.TestCase):
