@@ -54,10 +54,10 @@ m = DotMap()
 m.people.steve.age = 31
 ```
 
-You can provide a default value for missing attributes when you do not want automatic hierarchy creation for absent keys
+You can provide a factory for default values of missing keys when you do not want automatic hierarchy creation for absent keys. Like `collections.defaultdict`, the factory is called on each miss and the result is stored under the key
 
 ```python
-m = DotMap({'city': 'abc', 'CountryCode': 101}, _default='')
+m = DotMap({'city': 'abc', 'CountryCode': 101}, _default_factory=str)
 print(m.zipCode)
 # ''
 ```
