@@ -1,4 +1,5 @@
 import unittest
+import copy
 from dotmap import DotMap
 
 
@@ -190,6 +191,70 @@ class TestDynamic(unittest.TestCase):
         def assignNonDynamicKeyWithInit():
             nonDynamicWithInit['no'].creation
         self.assertRaises(KeyError, assignNonDynamicKeyWithInit)
+
+
+class TestDefault(unittest.TestCase):
+    def test_missing_attribute_returns_default(self):
+        address = {'city': 'abc', 'country': 'XY', 'CountryCode': 101}
+        m = DotMap(address, _default_factory=str)
+
+        self.assertEqual(m.city, 'abc')
+        self.assertEqual(m.CountryCode, 101)
+        self.assertNotIn('zipCode', m)
+        self.assertEqual(m.zipCode, '')
+
+    def test_nested_maps_inherit_default(self):
+        m = DotMap({'address': {'city': 'abc'}}, _default_factory=str)
+
+        self.assertEqual(m.address.city, 'abc')
+        self.assertEqual(m.address.zipCode, '')
+
+    def test_default_with_dynamic_false_raises(self):
+        with self.assertRaises(ValueError):
+            DotMap(_default_factory=str, _dynamic=False)
+
+    def test_default_factory_must_be_callable(self):
+        with self.assertRaises(TypeError):
+            DotMap(_default_factory='')
+
+    def test_copy_preserves_default(self):
+        m = DotMap({'city': 'abc'}, _default_factory=str)
+        c = m.copy()
+
+        self.assertEqual(c.city, 'abc')
+        self.assertNotIn('zipCode', c)
+        self.assertEqual(c.zipCode, '')
+
+    def test_deepcopy_preserves_default(self):
+        m = DotMap({'address': {'city': 'abc'}}, _default_factory=str)
+        c = copy.deepcopy(m)
+
+        self.assertEqual(c.address.city, 'abc')
+        self.assertNotIn('zipCode', c)
+        self.assertEqual(c.zipCode, '')
+        self.assertEqual(c.address.zipCode, '')
+
+    def test_default_list(self):
+        m = DotMap({}, _default_factory=list)
+        self.assertEqual(m.x, [])
+        self.assertEqual(m.y, [])
+
+        m.x.append(42)
+        self.assertEqual(m.x, [42])
+
+        self.assertEqual(m.y, [])
+
+    def test_default_factory_returning_cached_list_shares_it(self):
+        # if the factory itself returns the same cached object every call,
+        # keys share it -- freshness is the factory's responsibility
+        cached = []
+        m = DotMap({}, _default_factory=lambda: cached)
+
+        self.assertIs(m.x, cached)
+        m.x.append(42)
+
+        self.assertIs(m.y, cached)
+        self.assertEqual(m.y, [42])
 
 
 class TestRecursive(unittest.TestCase):

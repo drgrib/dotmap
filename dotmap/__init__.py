@@ -19,6 +19,11 @@ class DotMap(MutableMapping, OrderedDict):
     def __init__(self, *args, **kwargs):
         self._map = OrderedDict()
         self._dynamic = kwargs.pop('_dynamic', True)
+        self._default_factory = kwargs.pop('_default_factory', None)
+        if self._default_factory is not None and not callable(self._default_factory):
+            raise TypeError('_default_factory must be callable')
+        if self._default_factory is not None and not self._dynamic:
+            raise ValueError('cannot provide _default_factory when _dynamic is False')
         self._prevent_method_masking = kwargs.pop('_prevent_method_masking', False)
         
         _key_convert_hook = kwargs.pop('_key_convert_hook', None)
@@ -46,7 +51,14 @@ class DotMap(MutableMapping, OrderedDict):
                         v = trackedIDs[idv]
                     else:
                         trackedIDs[idv] = v
-                        v = self.__class__(v, _dynamic=self._dynamic, _prevent_method_masking = self._prevent_method_masking, _key_convert_hook =_key_convert_hook, _trackedIDs = trackedIDs)
+                        child_kwargs = {
+                            '_dynamic': self._dynamic,
+                            '_default_factory': self._default_factory,
+                            '_prevent_method_masking': self._prevent_method_masking,
+                            '_key_convert_hook': _key_convert_hook,
+                            '_trackedIDs': trackedIDs
+                        }
+                        v = self.__class__(v, **child_kwargs)
                 if type(v) is list:
                     l = []
                     for i in v:
@@ -57,7 +69,13 @@ class DotMap(MutableMapping, OrderedDict):
                                 n = trackedIDs[idi]
                             else:
                                 trackedIDs[idi] = i
-                                n = self.__class__(i, _dynamic=self._dynamic, _key_convert_hook =_key_convert_hook, _prevent_method_masking = self._prevent_method_masking)
+                                child_kwargs = {
+                                    '_dynamic': self._dynamic,
+                                    '_default_factory': self._default_factory,
+                                    '_key_convert_hook': _key_convert_hook,
+                                    '_prevent_method_masking': self._prevent_method_masking
+                                }
+                                n = self.__class__(i, **child_kwargs)
                         l.append(n)
                     v = l
                 self._map[k] = v
@@ -90,13 +108,21 @@ class DotMap(MutableMapping, OrderedDict):
     def __setitem__(self, k, v):
         self._map[k] = v
     def __getitem__(self, k):
-        if k not in self._map and self._dynamic and k != '_ipython_canary_method_should_not_exist_':
-            # automatically extend to new DotMap
-            self[k] = self.__class__()
+        if k not in self._map:
+            if self._dynamic and k != '_ipython_canary_method_should_not_exist_':
+                if self._default_factory is not None:
+                    self[k] = self._default_factory()
+                else:
+                    # automatically extend to new DotMap
+                    self[k] = self.__class__()
         return self._map[k]
 
     def __setattr__(self, k, v):
-        if k in {'_map','_dynamic', '_ipython_canary_method_should_not_exist_', '_prevent_method_masking'}:
+        if k in {
+            '_map', '_dynamic', '_default_factory',
+            '_ipython_canary_method_should_not_exist_',
+            '_prevent_method_masking'
+        }:
             super(DotMap, self).__setattr__(k,v)
         elif self._prevent_method_masking and k in reserved_keys:
             raise KeyError('"{}" is reserved'.format(k))
@@ -107,7 +133,10 @@ class DotMap(MutableMapping, OrderedDict):
         if k.startswith('__') and k.endswith('__'):
             raise AttributeError(k)
 
-        if k in {'_map','_dynamic','_ipython_canary_method_should_not_exist_'}:
+        if k in {
+            '_map', '_dynamic', '_default_factory',
+            '_ipython_canary_method_should_not_exist_'
+        }:
             return super(DotMap, self).__getattr__(k)
 
         try:
@@ -243,7 +272,7 @@ class DotMap(MutableMapping, OrderedDict):
     def clear(self):
         self._map.clear()
     def copy(self):
-        return self.__class__(self)
+        return self.__class__(self, _default_factory=self._default_factory)
     def __copy__(self):
         return self.copy()
     def __deepcopy__(self, memo=None):
@@ -280,7 +309,10 @@ class DotMap(MutableMapping, OrderedDict):
         d._map = OrderedDict.fromkeys(seq, value)
         return d
     def __getstate__(self): return self.__dict__
-    def __setstate__(self, d): self.__dict__.update(d)
+    def __setstate__(self, d):
+        self.__dict__.update(d)
+        if '_default_factory' not in self.__dict__:
+            self._default_factory = None
     # bannerStr
     def _getListStr(self,items):
         out = '['
