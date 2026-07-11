@@ -2,6 +2,8 @@ import copy
 import pickle
 import unittest
 from collections import OrderedDict
+from contextlib import redirect_stdout
+from io import StringIO
 
 from dotmap import DotMap, StaticDotMap
 
@@ -358,6 +360,25 @@ class TestOrderedDictInit(unittest.TestCase):
         self.assertIsInstance(m.c[0], DotMap)
 
 
+class TestFormatting(unittest.TestCase):
+    def test_values_preserve_order(self):
+        m = DotMap()
+        m.alpha = 1
+        m.bravo = 2
+        m.charlie = 3
+
+        self.assertEqual(list(m.values()), [1, 2, 3])
+
+    def test_pprint_outputs_plain_dict(self):
+        m = DotMap({'a': 1, 'sub': {'b': 2}})
+        buf = StringIO()
+
+        with redirect_stdout(buf):
+            m.pprint()
+
+        self.assertEqual(buf.getvalue(), "{'a': 1, 'sub': {'b': 2}}\n")
+
+
 class TestEmptyAdd(unittest.TestCase):
     def test_base(self):
         m = DotMap()
@@ -430,6 +451,19 @@ class TestEmptyAdd(unittest.TestCase):
 
 
 class TestMethodMasking(unittest.TestCase):
+    def test_prevent_method_masking_rejects_reserved_keys(self):
+        with self.assertRaises(KeyError):
+            DotMap(a=1, get='mango', _prevent_method_masking=True)
+
+        with self.assertRaises(KeyError):
+            DotMap((('a', 1), ('get', 'mango')), _prevent_method_masking=True)
+
+        with self.assertRaises(KeyError):
+            DotMap({'a': 1, 'get': 'mango'}, _prevent_method_masking=True)
+
+        with self.assertRaises(KeyError):
+            DotMap({'a': 1, 'b': {'get': 'mango'}}, _prevent_method_masking=True)
+
     def test_dynamic_key_is_not_reserved(self):
         m = DotMap({'a': 1, '_dynamic': 2}, _prevent_method_masking=True)
         self.assertEqual(m.a, 1)
@@ -656,3 +690,14 @@ class TestKeyConvertHook(unittest.TestCase):
         # replace the entire key with another one
         d = DotMap({"dot!map":456}, _key_convert_hook = lambda k: 'DOTMAP' if k == 'dot!map' else k)
         self.assertEqual(d.DOTMAP, 456)
+
+
+class TestInitFromDotMap(unittest.TestCase):
+    def test_nested_dotmaps_are_copied(self):
+        source = DotMap({'a': 1, 'sub': {'b': 2}})
+        copied = DotMap(source)
+
+        self.assertEqual(copied.a, 1)
+        self.assertEqual(copied.sub.b, 2)
+        self.assertIsNot(copied, source)
+        self.assertIsNot(copied.sub, source.sub)
