@@ -1,1 +1,2 @@
 include LICENSE.txt README.md
+include test_dotmap.py
