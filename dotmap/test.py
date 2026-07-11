@@ -200,6 +200,18 @@ class TestDynamic(unittest.TestCase):
         with self.assertRaises(AttributeError):
             m.missing
 
+    def test_copy_preserves_flags(self):
+        m = DotMap({'a': 1}, _dynamic=False, _prevent_method_masking=True)
+        c = m.copy()
+
+        self.assertFalse(c._dynamic)
+        self.assertTrue(c._prevent_method_masking)
+        self.assertEqual(c.a, 1)
+        with self.assertRaises(AttributeError):
+            c.missing
+        with self.assertRaises(KeyError):
+            c.get = 'mango'
+
 
 class TestDefault(unittest.TestCase):
     def test_missing_attribute_returns_default(self):
@@ -561,8 +573,8 @@ class TestStaticDotMap(unittest.TestCase):
         self.assertNotIsInstance(d['sub'], DotMap)
         self.assertEqual(d, {'a': 1, 'sub': {'b': 2}})
 
-    def test_copy_preserves_type_and_static(self):
-        m = StaticDotMap({'a': 1, 'sub': {'b': 2}})
+    def test_copy_preserves_type_and_flags(self):
+        m = StaticDotMap({'a': 1, 'sub': {'b': 2}}, _prevent_method_masking=True)
         c = m.copy()
         self.assertIsInstance(c, StaticDotMap)
         self.assertIsInstance(c.sub, StaticDotMap)
@@ -572,6 +584,9 @@ class TestStaticDotMap(unittest.TestCase):
             c.missing
         with self.assertRaises(AttributeError):
             c.sub.missing
+        self.assertTrue(c._prevent_method_masking)
+        with self.assertRaises(KeyError):
+            c.get = 'mango'
 
     def test_deepcopy_preserves_type_and_static(self):
         m = StaticDotMap({'a': 1, 'sub': {'b': 2}})

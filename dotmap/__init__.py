@@ -270,7 +270,12 @@ class DotMap(MutableMapping, OrderedDict):
     def clear(self):
         self._map.clear()
     def copy(self):
-        return self.__class__(self, _default_factory=self._default_factory)
+        return self.__class__(
+            self,
+            _dynamic=self._dynamic,
+            _default_factory=self._default_factory,
+            _prevent_method_masking=self._prevent_method_masking,
+        )
     def __copy__(self):
         return self.copy()
     def __deepcopy__(self, memo=None):
