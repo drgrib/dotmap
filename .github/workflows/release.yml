@@ -1,0 +1,46 @@
+name: Publish release to PyPI
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    environment:
+      name: pypi
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b # v8.1.0
+        with:
+          version: "0.11.28"
+
+      - name: Install Python
+        run: uv python install 3.14
+
+      - name: Build sdist and wheel
+        run: uv build
+
+      - name: Check dist versions match tag
+        run: python _ensure_dist_files_use_version.py "${GITHUB_REF_NAME#v}" dist/*.whl dist/*.tar.gz
+
+      - name: Smoke test wheel
+        run: >
+          uv run --isolated --no-project --with dist/*.whl
+          python -c "from dotmap import DotMap; assert DotMap(a=1).a == 1"
+
+      - name: Smoke test sdist
+        run: >
+          uv run --isolated --no-project --with dist/*.tar.gz
+          python -c "from dotmap import DotMap; assert DotMap(a=1).a == 1"
+
+      - name: Publish to PyPI
+        run: uv publish --trusted-publishing always
