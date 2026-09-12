@@ -317,6 +317,31 @@ class Testkwarg(unittest.TestCase):
 
 
 class TestDeepCopy(unittest.TestCase):
+    def test_nested_mutable_values_are_independent(self):
+        original = DotMap()
+        original.data = [[1], {2}]
+        duplicate = copy.deepcopy(original)
+        duplicate.data[0].append(3)
+        duplicate.data[1].add(4)
+        self.assertEqual(original.data, [[1], {2}])
+
+    def test_self_reference_is_preserved(self):
+        original = DotMap()
+        original.self = original
+        duplicate = copy.deepcopy(original)
+        self.assertIs(duplicate.self, duplicate)
+        self.assertIsNot(duplicate, original)
+
+    def test_memo_preserves_references_outside_map(self):
+        shared = [1]
+        original = DotMap()
+        original.first = shared
+        original.second = shared
+        duplicate, copied_shared = copy.deepcopy([original, shared])
+        self.assertIs(duplicate.first, duplicate.second)
+        self.assertIs(duplicate.first, copied_shared)
+        self.assertIsNot(copied_shared, shared)
+
     def test(self):
         original = DotMap()
         original.a = 1

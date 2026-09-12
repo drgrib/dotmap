@@ -1,4 +1,5 @@
 
+from copy import deepcopy
 from collections import OrderedDict
 from collections.abc import MutableMapping, Iterable
 from json import dumps
@@ -279,7 +280,12 @@ class DotMap(MutableMapping, OrderedDict):
     def __copy__(self):
         return self.copy()
     def __deepcopy__(self, memo=None):
-        return self.copy()
+        if memo is None:
+            memo = {}
+        result = self.__class__.__new__(self.__class__)
+        memo[id(self)] = result
+        result.__dict__.update(deepcopy(self.__dict__, memo))
+        return result
     def get(self, key, default=None):
         return self._map.get(key, default)
     def has_key(self, key):
