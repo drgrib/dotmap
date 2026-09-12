@@ -160,6 +160,15 @@ class TestPickle(unittest.TestCase):
 
 
 class TestEmpty(unittest.TestCase):
+    def test_falsey_keys_are_not_empty(self):
+        for key in (0, False, '', None):
+            with self.subTest(key=key):
+                m = DotMap({key: 'value'})
+                self.assertFalse(m.empty())
+                with self.assertRaises(TypeError):
+                    m + 'replacement'
+                self.assertEqual(m[key], 'value')
+
     def test(self):
         m = DotMap()
         self.assertTrue(m.empty())
