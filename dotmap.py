@@ -223,7 +223,7 @@ class DotMap(MutableMapping, OrderedDict):
             pprint(self.toDict())
 
     def empty(self):
-        return (not any(self))
+        return len(self) == 0
 
     # proper dict subclassing
     def values(self):
