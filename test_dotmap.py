@@ -68,6 +68,23 @@ class TestReadme(unittest.TestCase):
 
 
 class TestBasic(unittest.TestCase):
+    def test_pop_missing_without_default(self):
+        for cls in (DotMap, StaticDotMap):
+            with self.subTest(cls=cls):
+                value = cls()
+                with self.assertRaises(KeyError):
+                    value.pop('missing')
+                self.assertEqual(len(value), 0)
+
+    def test_pop_explicit_default_and_existing_key(self):
+        value = DotMap({'key': 1})
+        self.assertEqual(value.pop('key'), 1)
+        self.assertIsNone(value.pop('missing', None))
+        marker = object()
+        self.assertIs(value.pop('missing', marker), marker)
+        self.assertIs(value.pop('missing', default=marker), marker)
+        self.assertEqual(len(value), 0)
+
     def setUp(self):
         self.d = {
             'a': 1,

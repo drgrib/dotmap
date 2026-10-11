@@ -15,6 +15,8 @@ def here(item=None):
 
 __all__ = ['DotMap', 'StaticDotMap']
 
+_MISSING = object()
+
 class DotMap(MutableMapping, OrderedDict):
     def __init__(self, *args, **kwargs):
         self._map = OrderedDict()
@@ -290,7 +292,9 @@ class DotMap(MutableMapping, OrderedDict):
         return self._map.itervalues()
     def keys(self):
         return self._map.keys()
-    def pop(self, key, default=None):
+    def pop(self, key, default=_MISSING):
+        if default is _MISSING:
+            return self._map.pop(key)
         return self._map.pop(key, default)
     def popitem(self):
         return self._map.popitem()
