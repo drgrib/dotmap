@@ -112,7 +112,10 @@ class DotMap(MutableMapping, OrderedDict):
                     self[k] = self._default_factory()
                 else:
                     # automatically extend to new DotMap
-                    self[k] = self.__class__()
+                    child = self.__class__()
+                    if self._prevent_method_masking:
+                        child._prevent_method_masking = True
+                    self[k] = child
         return self._map[k]
 
     def __setattr__(self, k, v):
