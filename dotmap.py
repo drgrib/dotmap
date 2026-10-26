@@ -285,9 +285,9 @@ class DotMap(MutableMapping, OrderedDict):
     def has_key(self, key):
         return key in self._map
     def iterkeys(self):
-        return self._map.iterkeys()
+        return iter(self._map)
     def itervalues(self):
-        return self._map.itervalues()
+        return iter(self._map.values())
     def keys(self):
         return self._map.keys()
     def pop(self, key, default=None):
@@ -301,11 +301,11 @@ class DotMap(MutableMapping, OrderedDict):
             self._map.update(*args)
         self._map.update(kwargs)
     def viewitems(self):
-        return self._map.viewitems()
+        return self._map.items()
     def viewkeys(self):
-        return self._map.viewkeys()
+        return self._map.keys()
     def viewvalues(self):
-        return self._map.viewvalues()
+        return self._map.values()
     @classmethod
     def fromkeys(cls, seq, value=None):
         d = cls()
