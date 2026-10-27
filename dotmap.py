@@ -292,8 +292,12 @@ class DotMap(MutableMapping, OrderedDict):
         return self._map.keys()
     def pop(self, key, default=None):
         return self._map.pop(key, default)
-    def popitem(self):
-        return self._map.popitem()
+    def popitem(self, last=True):
+        return self._map.popitem(last=last)
+    def move_to_end(self, key, last=True):
+        return self._map.move_to_end(key, last=last)
+    def __reversed__(self):
+        return reversed(self._map)
     def setdefault(self, key, default=None):
         return self._map.setdefault(key, default)
     def update(self, *args, **kwargs):
