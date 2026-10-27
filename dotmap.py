@@ -231,7 +231,7 @@ class DotMap(MutableMapping, OrderedDict):
 
     # ipython support
     def __dir__(self):
-        return self.keys()
+        return [key for key in self.keys() if isinstance(key, str)]
 
     @classmethod
     def parseOther(self, other):
