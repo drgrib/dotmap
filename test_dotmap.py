@@ -1,7 +1,8 @@
 import copy
 import pickle
 import unittest
-from collections import OrderedDict
+from collections import OrderedDict, UserDict
+from types import MappingProxyType
 from contextlib import redirect_stdout
 from io import StringIO
 
@@ -68,6 +69,25 @@ class TestReadme(unittest.TestCase):
 
 
 class TestBasic(unittest.TestCase):
+    def test_equality_with_other_mapping_types(self):
+        m = DotMap({'a': 1})
+        for other in (UserDict({'a': 1}), MappingProxyType({'a': 1})):
+            with self.subTest(mapping=type(other)):
+                self.assertTrue(m == other)
+                self.assertTrue(other == m)
+                self.assertFalse(m != other)
+                self.assertFalse(other != m)
+
+        self.assertNotEqual(m, UserDict({'a': 2}))
+        self.assertNotEqual(m, object())
+
+    def test_equality_allows_reflected_comparison(self):
+        class MatchesDotMap:
+            def __eq__(self, other):
+                return isinstance(other, DotMap)
+
+        self.assertTrue(DotMap(a=1) == MatchesDotMap())
+
     def setUp(self):
         self.d = {
             'a': 1,
