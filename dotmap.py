@@ -244,8 +244,6 @@ class DotMap(MutableMapping, OrderedDict):
         return self._map.__cmp__(other)
     def __eq__(self, other):
         other = DotMap.parseOther(other)
-        if not isinstance(other, dict):
-            return False
         return self._map.__eq__(other)
     def __ge__(self, other):
         other = DotMap.parseOther(other)
